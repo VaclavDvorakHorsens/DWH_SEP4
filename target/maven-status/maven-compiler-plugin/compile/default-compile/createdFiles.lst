@@ -1,0 +1,6 @@
+dwh\adapters\EnvironmentDataAdapter.class
+dwh\MainStart.class
+dwh\adapters\EnvironmentDataAdapterImpl.class
+dwh\controllers\EnvironmentDataController.class
+dwh\dbconnection\DbConnectionManager.class
+dwh\networking\WebSocketConnection.class
