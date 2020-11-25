@@ -17,7 +17,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
         dbConnectionManager = new DbConnectionManager();
     }
 
-    /*CONNECT TO THE SOURCE DATABASE  */
+    /*  CONNECT TO THE SOURCE DATABASE - change later */
     @Override
     public void addEnvironmentalValuesToDB(EnvironmentalValues environmentalValues) {
         dbConnectionManager.openConnectionToDatabase();
@@ -47,7 +47,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
         dbConnectionManager.closeConnectionToDatabase();
     }
 
-    /*CONNECT TO THE VIEW  */
+    /*  CONNECT TO THE VIEW - change later */
     @Override
     public EnvironmentalValues getLatestEnvironmentalValue() {
 
@@ -74,7 +74,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
                 temperature_sensor, passenger_value, passenger_sensor, date);
     }
 
-    /*CONNECT TO THE VIEW  */
+    /*  CONNECT TO THE VIEW - change later */
     @Override
     public List<EnvironmentalValues> getEnvironmentalValuesFromDatabaseGivenDate(Date beginDate, Date endDate) {
 
