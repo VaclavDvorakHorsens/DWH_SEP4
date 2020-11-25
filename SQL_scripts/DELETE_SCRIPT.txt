@@ -1,0 +1,22 @@
+use copenhagenmetro
+
+delete from source_EnvironmentValues
+
+
+
+use copenhagenmetro_dwh
+delete from f_CO2_EnvironmentValue
+delete from f_Humidity_EnvironmentValue
+delete from f_Passenger_EnvironmentValue
+delete from f_Temperature_EnvironmentValue
+
+use copenhagenmetro_stage
+delete from stage_temp_f_CO2_EnvironmentValue
+delete from stage_temp_f_Humidity_EnvironmentValue
+delete from stage_temp_f_Passenger_EnvironmentValue
+delete from stage_temp_f_Temperature_EnvironmentValue
+delete from stage_f_CO2_EnvironmentValue
+delete from stage_f_Humidity_EnvironmentValue
+delete from stage_f_Passenger_EnvironmentValue
+delete from stage_f_Temperature_EnvironmentValue
+

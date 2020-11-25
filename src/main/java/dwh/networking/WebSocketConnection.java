@@ -26,8 +26,8 @@ public class WebSocketConnection implements WebSocket.Listener {
     @Override
     public void onOpen(WebSocket webSocket) {
         System.out.println("Open connection");
-        /*webSocket.sendText("this is a test",true);
-        webSocket.sendBinary(bbuf,true);*/
+        webSocket.sendText("public wss test",true);
+       /* webSocket.sendBinary(bbuf,true);*/
         webSocket.request(1);
 
         WebSocket.Listener.super.onOpen(webSocket);
@@ -70,7 +70,8 @@ public class WebSocketConnection implements WebSocket.Listener {
             e.printStackTrace();
         }
         System.out.println(indented);
-        environmentDataAdapter.addValuesToDatabase(indented);
+        String a=data.toString();
+        environmentDataAdapter.addValuesToDatabase(a);
         webSocket.request(1);
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     }

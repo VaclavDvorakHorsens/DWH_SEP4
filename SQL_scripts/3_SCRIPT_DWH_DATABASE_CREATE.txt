@@ -1,0 +1,189 @@
+/*THIS SCRIPT CREATES DWH DATABASE*/
+
+
+/*THIS SHOULD BE CALLED ON TEST ENVIRONMENT ONLY
+DROP DATABASE if exists CopenhagenMetro_DWH;
+/*create source database*/
+CREATE DATABASE CopenhagenMetro_DWH;*/
+
+use CopenhagenMetro_DWH;
+
+
+/*Create dwh table for MetroStation*/
+Create table dim_MetroStation
+(
+M_ID int IDENTITY(1,1),
+MetroStation_ID int,
+Name varchar(255),
+ValidFrom DATE,
+ValidTo DATE,
+PRIMARY KEY (M_ID)
+);
+
+/*Create dwh table for Device*/
+Create table dim_Device
+(
+D_ID int IDENTITY(1,1),
+Device_ID int,
+Name varchar(255),
+PRIMARY KEY (D_ID)
+);
+
+
+/*Create dwh table for Sensor*/
+Create table dim_Sensor
+(
+S_ID int IDENTITY(1,1),
+Sensor_ID int,
+Name varchar(255),
+PRIMARY KEY (S_ID)
+);
+
+
+
+
+/*Create dim table for Time*/
+
+CREATE TABLE dim_Time
+(
+    T_ID       INT  IDENTITY (1, 1)   NOT NULL    PRIMARY KEY
+,   Hour  INT NOT NULL
+,   Minute    INT NOT NULL
+)
+
+DECLARE    @startdate  DATETIME
+DECLARE    @enddate    DATETIME
+DECLARE    @date       DATETIME
+
+SET        @startdate  =    '1/1/2005 12:00:00 AM'   
+SET        @enddate    =    '1/1/2005 23:59:59 PM'  
+SET        @date       =     @startdate
+
+WHILE    @date <= @enddate
+BEGIN
+    INSERT INTO    dim_Time (Hour, Minute)
+    VALUES (
+    
+ DATEPART(hh, @date)                                               
+    ,    DATEPART(mi, @date)                                               
+    )
+    SET  @date  =    DATEADD(mi, 1, @date) 
+
+END
+
+
+
+
+
+/*Create dim table for Date*/		
+CREATE TABLE [dim_Date]		
+(		
+[Date_ID] [int] IDENTITY(1,1) NOT NULL, 		
+[CalendarDate] DATE,		
+WeekDayName nvarchar(50),		
+MonthName nvarchar(50),		
+WeekDayNumber int,
+PRIMARY KEY (Date_ID)	
+)		
+go		
+DECLARE @StartDate DATE		
+DECLARE @EndDate DATE		
+		
+		
+		
+SET @StartDate = '2020-10-10'		
+SET @EndDate = DATEADD(d, 4095, @StartDate)		
+WHILE @StartDate <= @EndDate		
+BEGIN		
+INSERT INTO [dim_Date]		
+(		
+CalendarDate,		
+WeekDayName,		
+MonthName,		
+WeekDayNumber		
+)		
+SELECT		
+@StartDate,		
+DATENAME(weekday, @StartDate),		
+DATENAME(month , @StartDate),		
+DATEPART(weekday, @StartDate)		
+SET @StartDate = DATEADD(dd, 1, @StartDate)		
+END		
+
+
+
+
+/*create dwh table for Action*/
+CREATE TABLE [dim_Action]
+(
+[A_ID] [int] IDENTITY(1,1), 
+Action_ID int,
+name nvarchar (50),
+PRIMARY KEY (A_ID)
+)
+
+
+/*Create dimension table for Update*/
+Create table dim_Update
+(
+U_ID int IDENTITY(1,1),
+LastUpdate DATETIME,
+PRIMARY KEY (U_ID)
+);
+
+
+/*create fact table for CO2 environmental values*/
+Create table f_CO2_EnvironmentValue
+(
+M_ID int FOREIGN KEY REFERENCES dim_Metrostation(M_ID),
+Date_ID int FOREIGN KEY REFERENCES dim_Date(Date_ID),
+T_ID int FOREIGN KEY REFERENCES dim_Time(T_ID),
+S_ID int FOREIGN KEY REFERENCES dim_Sensor(S_ID),
+CO2_value float,
+);
+
+
+/*create fact table for Temperature environmental values*/
+Create table f_Temperature_EnvironmentValue
+(
+M_ID int FOREIGN KEY REFERENCES dim_Metrostation(M_ID),
+Date_ID int FOREIGN KEY REFERENCES dim_Date(Date_ID),
+T_ID int FOREIGN KEY REFERENCES dim_Time(T_ID),
+S_ID int FOREIGN KEY REFERENCES dim_Sensor(S_ID),
+Temp_Value float
+);
+
+
+/*create fact table for Humidity environmental values*/
+Create table f_Humidity_EnvironmentValue
+(
+M_ID int FOREIGN KEY REFERENCES dim_Metrostation(M_ID),
+Date_ID int FOREIGN KEY REFERENCES dim_Date(Date_ID),
+T_ID int FOREIGN KEY REFERENCES dim_Time(T_ID),
+S_ID int FOREIGN KEY REFERENCES dim_Sensor(S_ID),
+Humidity_Value float
+);
+
+
+/*create fact table for Passangers environmental values*/
+Create table f_Passenger_EnvironmentValue
+(
+M_ID int FOREIGN KEY REFERENCES dim_Metrostation(M_ID),
+Date_ID int FOREIGN KEY REFERENCES dim_Date(Date_ID),
+T_ID int FOREIGN KEY REFERENCES dim_Time(T_ID),
+S_ID int FOREIGN KEY REFERENCES dim_Sensor(S_ID),
+Passenger_Value float
+);
+
+
+/*create fact table for Actions performed on devices values*/
+Create table f_ActionLog
+(
+A_ID int FOREIGN KEY REFERENCES dim_Action(A_ID),
+D_ID int FOREIGN KEY REFERENCES dim_Device(D_ID),
+T_ID int FOREIGN KEY REFERENCES dim_Time(T_ID),
+Date_ID int FOREIGN KEY REFERENCES dim_Date(Date_ID),
+valueSetInDevice float
+);
+
+

@@ -1,0 +1,189 @@
+/*THIS SCRIPT CREATES STAGE DATABASE*/
+
+/*
+/*THIS SHOULD BE USED ON TEST ENVIRONMENT ONLY*/
+DROP DATABASE if exists CopenhagenMetro_stage;
+CREATE DATABASE CopenhagenMetro_stage;*/
+
+use CopenhagenMetro_stage;
+/*Create stage table for MetroStation*/
+Create table stage_dim_MetroStation
+(
+MetroStation_ID int,
+Name varchar(255),
+ValidFrom DATE,
+ValidTo DATE,
+PRIMARY KEY (MetroStation_ID)
+);
+
+
+/*Create stage table for MetroStation*/
+Create table stage_temp_dim_MetroStation
+(
+MetroStation_ID int,
+Name varchar(255),
+PRIMARY KEY (MetroStation_ID)
+);
+
+
+/*Create stage table for Action*/
+Create table stage_dim_Action
+(
+Action_ID int,
+Name varchar(255),
+PRIMARY KEY (Action_ID)
+);
+
+
+/*Create stage table for Sensor*/
+Create table stage_dim_Sensor
+(
+Sensor_ID int,
+Name varchar(255),
+PRIMARY KEY (Sensor_ID)
+);
+
+
+/*Create stage table for Device*/
+Create table stage_dim_Device
+(
+Device_ID int,
+Name varchar(255),
+PRIMARY KEY (Device_ID)
+);
+
+/*Create stage fact table for CO2 environmental values*/
+Create table stage_f_CO2_EnvironmentValue
+(
+M_ID int,
+Date_ID int,
+T_ID int,
+S_ID int,
+MetroStation_ID int,
+Sensor_ID int,
+CO2_value float,
+dateAndTime DateTime
+);
+
+
+use CopenhagenMetro_stage;
+/*Create temporary stage fact table for CO2 environmental values*/
+Create table stage_temp_f_CO2_EnvironmentValue
+(
+M_ID int,
+Date_ID int,
+T_ID int,
+S_ID int,
+MetroStation_ID int,
+Sensor_ID int,
+CO2_value float,
+dateAndTime DateTime
+)
+
+/*Create stage fact table for Humidity environmental values*/
+Create table stage_f_Humidity_EnvironmentValue
+(
+M_ID int,
+Date_ID int,
+T_ID int,
+S_ID int,
+MetroStation_ID int,
+Sensor_ID int,
+Humidity_value float,
+dateAndTime DateTime
+)
+
+
+/*Create temporary stage fact table for Humidity environmental values*/
+Create table stage_temp_f_Humidity_EnvironmentValue
+(
+M_ID int,
+Date_ID int,
+T_ID int,
+S_ID int,
+MetroStation_ID int,
+Sensor_ID int,
+Humidity_value float,
+dateAndTime DateTime
+)
+
+/*Create temporary stage fact table for Passenger environmental values*/
+Create table stage_f_Passenger_EnvironmentValue
+(
+M_ID int,
+Date_ID int,
+T_ID int,
+S_ID int,
+MetroStation_ID int,
+Sensor_ID int,
+Passenger_value float,
+dateAndTime DateTime
+)
+
+/*Create temporary stage fact table for Passenger environmental values*/
+Create table stage_temp_f_Passenger_EnvironmentValue
+(
+M_ID int,
+Date_ID int,
+T_ID int,
+S_ID int,
+MetroStation_ID int,
+Sensor_ID int,
+Passenger_value float,
+dateAndTime DateTime
+)
+
+
+/*Create stage fact table for Temperature environmental values*/
+Create table stage_f_Temperature_EnvironmentValue
+(
+M_ID int,
+Date_ID int,
+T_ID int,
+S_ID int,
+MetroStation_ID int,
+Sensor_ID int,
+Temp_value float,
+dateAndTime DateTime
+)
+
+/*Create temporary stage fact table for Temperature environmental values*/
+Create table stage_temp_f_Temperature_EnvironmentValue
+(
+M_ID int,
+Date_ID int,
+T_ID int,
+S_ID int,
+MetroStation_ID int,
+Sensor_ID int,
+Temp_value float,
+dateAndTime DateTime
+)
+
+/*Create stage fact table for actions performed on devices by administrator*/
+Create table stage_f_ActionLog
+(
+A_ID int,
+Date_ID int,
+T_ID int,
+D_ID int,
+Device_ID int,
+Action_ID int,
+valueSetInDevice float,
+dateAndTime DateTime
+)
+
+
+/*Create temporary stage fact table for actions performed on devices by administrator*/
+Create table stage_temp_f_ActionLog
+(
+A_ID int,
+Date_ID int,
+T_ID int,
+D_ID int,
+Device_ID int,
+Action_ID int,
+valueSetInDevice float,
+dateAndTime DateTime
+)
+

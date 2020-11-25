@@ -35,7 +35,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
     }
 
     @Override
-    public List<String> getValuesFromDatabase() {
+    public /*List<String>*/String getValuesFromDatabase() {
         dbConnectionManager.openConnectionToDatabase();
 
         List<String> values = new ArrayList<>();
@@ -51,6 +51,6 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
         }
         dbConnectionManager.closeConnectionToDatabase();
 
-        return values;
+        return values.get(values.size()-1);
     }
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class DbConnectionManager {
 
+
     String url = "jdbc:sqlserver://";
     String driver = "den1.mssql7.gear.host;";
     String databaseName = "databaseName=tempdatabase1";

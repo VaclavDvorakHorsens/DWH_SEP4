@@ -1,0 +1,110 @@
+USE [CopenhagenMetro]
+GO
+/****** Object:  Trigger [dbo].[trigger_increment_load]    Script Date: 25/11/2020 08:22:23 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER TRIGGER [dbo].[trigger_increment_load_metrostation]
+ON  [dbo].[source_MetroStation]
+AFTER INSERT, UPDATE, DELETE
+AS
+BEGIN
+
+
+
+/*clean temp MetroStation table*/
+delete from CopenhagenMetro_stage.dbo.stage_temp_dim_MetroStation
+
+
+/*6.0 ADD new metro station*/
+/*add new metro station*/
+insert into CopenhagenMetro_stage.dbo.stage_dim_MetroStation
+(MetroStation_ID, name,ValidFrom,ValidTo)
+/*find added rows*/
+select MetroStation_ID, name,(select LastUpdate+1 from CopenhagenMetro_DWH.dbo.dim_Update), '12/31/9999'  from [CopenhagenMetro].[dbo].[source_MetroStation]
+where MetroStation_ID in 
+((
+select MetroStation_ID from [CopenhagenMetro].[dbo].[source_MetroStation]
+)
+except
+(
+select MetroStation_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation
+))
+
+
+/*7 INCREMENTAL LOAD*/
+/*update deleted metro station*/	
+
+update CopenhagenMetro_DWH.dbo.dim_MetroStation set ValidTo=(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update)/*last update*/	
+where MetroStation_ID in 	
+((	
+select MetroStation_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation  where ValidTo>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update)	
+)	
+except	
+(	
+select MetroStation_ID from  [CopenhagenMetro].[dbo].[source_MetroStation]	
+))	
+
+
+/*8 INCREMENTAL LOAD*/	
+/*add new MetroStation*/	
+	
+
+	
+insert into CopenhagenMetro_DWH.dbo.dim_MetroStation(	
+[MetroStation_ID],[Name],[ValidFrom],[ValidTo])	
+select 	
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[MetroStation_ID],	
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[name],	
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[ValidFrom],	
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[ValidTo] from	
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation] where ValidFrom=(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);	
+
+
+/*9 INCREMENTAL LOAD*/		
+/*update existing metro stations*/		
+		
+
+/*find and insert updated rows into temp table*/		
+Insert into CopenhagenMetro_stage.dbo.stage_temp_dim_MetroStation		
+(MetroStation_ID, Name)		
+(		
+select MetroStation_ID,		
+CASE WHEN		
+Name COLLATE DATABASE_DEFAULT is null 		
+THEN 'NO VALUE'		
+ELSE Name		
+END		
+as Name		
+from [CopenhagenMetro].[dbo].[source_MetroStation]		
+except		
+(		
+select MetroStation_ID,Name COLLATE DATABASE_DEFAULT as Name		
+from CopenhagenMetro_DWH.dbo.dim_MetroStation where ValidTo>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update)		
+)		
+except 		
+(		
+select MetroStation_ID,Name COLLATE DATABASE_DEFAULT from [CopenhagenMetro].[dbo].[source_MetroStation]		
+where MetroStation_ID NOT IN (select MetroStation_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation)		
+))		
+		
+		
+/*clean data*/		
+		
+update CopenhagenMetro_stage.dbo.stage_temp_dim_MetroStation set Name='NO VALUE' where Name is Null;		
+
+
+
+/*10 INCREMENTAL LOAD, update dimension metrostation table with changed existing metro station*/	
+	
+/*update dimension table with existing*/	
+update CopenhagenMetro_DWH.dbo.dim_MetroStation set ValidTo=(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update) where	
+MetroStation_ID in (select MetroStation_ID from CopenhagenMetro_stage.dbo.stage_temp_dim_MetroStation)	
+	
+	
+/*insert new row into dimension table*/	
+insert into CopenhagenMetro_DWH.dbo.dim_MetroStation (MetroStation_ID, Name, ValidFrom,ValidTo)	
+select MetroStation_ID, Name,(select LastUpdate+1 from CopenhagenMetro_DWH.dbo.dim_Update),'12/31/9999' from CopenhagenMetro_stage.dbo.stage_temp_dim_MetroStation	
+
+END

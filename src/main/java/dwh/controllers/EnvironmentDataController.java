@@ -7,15 +7,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @RestController
 public class EnvironmentDataController {
 
    private final EnvironmentDataAdapter environmentDataAdapter;
+   private GsonBuilder builder;
+   private Gson gson;
 
-    public EnvironmentDataController()
+   public EnvironmentDataController()
     {
+
         environmentDataAdapter = new EnvironmentDataAdapterImpl();
+        builder= new GsonBuilder();
+        gson = builder.create();
+
     }
 
     @PostMapping("/DataValues")
@@ -29,8 +37,9 @@ public class EnvironmentDataController {
     }
 
     @GetMapping("/DataValues")
-    public List<String> getValues()
+    public /*List<String>*/String getValues()
     {
-        return environmentDataAdapter.getValuesFromDatabase();
+        String jsonString = gson.toJson(environmentDataAdapter.getValuesFromDatabase());
+        return jsonString;
     }
 }
