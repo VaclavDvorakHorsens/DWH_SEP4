@@ -18,19 +18,4 @@ public class EnvironmentDataController {
         environmentDataAdapter = new EnvironmentDataAdapterImpl();
     }
 
-    @PostMapping("/DataValues")
-    public ResponseEntity<String> postValues(@RequestBody String value)
-    {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("PostData", "success");
-
-        environmentDataAdapter.addValuesToDatabase(value);
-        return new ResponseEntity<>(headers, HttpStatus.OK);
-    }
-
-    @GetMapping("/DataValues")
-    public List<String> getValues()
-    {
-        return environmentDataAdapter.getValuesFromDatabase();
-    }
 }
