@@ -2,12 +2,12 @@ package dwh.adapters;
 
 import dwh.models.EnvironmentalValues;
 
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public interface EnvironmentDataAdapter {
 
    void addEnvironmentalValuesToDB(EnvironmentalValues environmentalValues);
    EnvironmentalValues getLatestEnvironmentalValue();
-   List<EnvironmentalValues> getEnvironmentalValuesFromDatabaseGivenDate(Date beginDate, Date endDate);
+   List<EnvironmentalValues> getEnvironmentalValuesFromDatabaseGivenDate(java.sql.Date beginDate, Date endDate);
 }

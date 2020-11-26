@@ -6,18 +6,32 @@ import java.util.ArrayList;
 public class DbConnectionManager {
 
     String url = "jdbc:sqlserver://";
-    String driver = "den1.mssql7.gear.host;";
-    String databaseName = "databaseName=tempdatabase1";
-    String username = "tempdatabase1";
-    String password = "Vf50x5?tW8i?";
+    String driver = "34.66.112.80;";
+    String sourceDatabase = "databaseName=copenhagenmetro";
+    String dataWarehouse = "databaseName=copenhagenmetro_dwh";
+    String username = "sqlserver";
+    String password = "admin";
     Connection connection;
     PreparedStatement preparedStatement;
     ResultSet resultSet;
 
-    public void openConnectionToDatabase() {
+    public void openConnectionToSourceDatabase() {
         {
             try {
-                connection = DriverManager.getConnection(url + driver + databaseName, username, password);
+                connection = DriverManager.getConnection(url + driver + sourceDatabase, username, password);
+                System.out.println("Connected to database server.");
+
+            } catch (SQLException e) {
+                System.out.println("Connection failed.");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void openConnectionToDWHDatabase() {
+        {
+            try {
+                connection = DriverManager.getConnection(url + driver + dataWarehouse, username, password);
                 System.out.println("Connected to database server.");
 
             } catch (SQLException e) {

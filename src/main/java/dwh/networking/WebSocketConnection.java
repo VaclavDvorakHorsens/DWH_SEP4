@@ -70,7 +70,6 @@ public class WebSocketConnection implements WebSocket.Listener {
             e.printStackTrace();
         }
         System.out.println(indented);
-        environmentDataAdapter.addValuesToDatabase(indented);
         webSocket.request(1);
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     }

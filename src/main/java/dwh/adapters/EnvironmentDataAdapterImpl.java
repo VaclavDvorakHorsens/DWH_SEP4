@@ -6,7 +6,7 @@ import dwh.models.EnvironmentalValues;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
@@ -17,13 +17,13 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
         dbConnectionManager = new DbConnectionManager();
     }
 
-    /*  CONNECT TO THE SOURCE DATABASE - change later */
+    /*  CONNECT TO THE SOURCE DATABASE */
     @Override
     public void addEnvironmentalValuesToDB(EnvironmentalValues environmentalValues) {
-        dbConnectionManager.openConnectionToDatabase();
+        dbConnectionManager.openConnectionToSourceDatabase();
 
-        String sqlInsert = "INSERT INTO source_EnvironmentalValues" +
-                "(CO2_value, CO2_sensorID, humidity_value, humidity_Sensor_ID, temperature_value, temperature_Sensor_ID," +
+        String sqlInsert = "INSERT INTO dbo.source_EnvironmentValues" +
+                "(CO2_value, CO2_sensor_ID, humidity_value, humidity_Sensor_ID, temperature_value, temperature_Sensor_ID," +
                 "numberOfPassengers_value, numberOfPassengers_Sensor_ID, dateAndTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlInsert);
@@ -47,11 +47,11 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
         dbConnectionManager.closeConnectionToDatabase();
     }
 
-    /*  CONNECT TO THE VIEW - change later */
+    /*  CONNECT TO THE VIEW */
     @Override
     public EnvironmentalValues getLatestEnvironmentalValue() {
 
-        dbConnectionManager.openConnectionToDatabase();
+        dbConnectionManager.openConnectionToDWHDatabase();
 
         String sqlGet = "SELECT TOP 1 (CO2_value, CO2_sensor, humidity_value, humidity_sensor, temperature_value, temperature_sensor," +
                 "passengers_value, passengers_sensor, DateTime) FROM f_Environmental_View ORDER BY DateTime DESC;";
@@ -74,11 +74,11 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
                 temperature_sensor, passenger_value, passenger_sensor, date);
     }
 
-    /*  CONNECT TO THE VIEW - change later */
+    /*  CONNECT TO THE VIEW */
     @Override
     public List<EnvironmentalValues> getEnvironmentalValuesFromDatabaseGivenDate(Date beginDate, Date endDate) {
 
-        dbConnectionManager.openConnectionToDatabase();
+        dbConnectionManager.openConnectionToDWHDatabase();
 
         List<EnvironmentalValues> values = new ArrayList<>();
 
