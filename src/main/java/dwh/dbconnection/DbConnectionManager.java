@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class DbConnectionManager {
 
+
     String url = "jdbc:sqlserver://";
     String driver = "34.66.112.80;";
     String sourceDatabase = "databaseName=copenhagenmetro";
