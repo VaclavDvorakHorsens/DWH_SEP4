@@ -71,6 +71,9 @@ public class WebSocketConnection implements WebSocket.Listener {
         }
         System.out.println(indented);
         String a = data.toString();
+
+        /*  Still needs to be constructed into environmentalValues object*/
+
     //    environmentDataAdapter.addEnvironmentalValuesToDB(a);
         webSocket.request(1);
         return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);

@@ -33,6 +33,8 @@ public class EnvironmentDataController {
         HttpHeaders headers = new HttpHeaders();
         headers.add("PostData", "success");
 
+        /*  Still needs to be constructed into environmentalValues object*/
+
     //    environmentDataAdapter.addEnvironmentalValuesToDB(value);
         return new ResponseEntity<>(headers, HttpStatus.OK);
     }
