@@ -20,13 +20,10 @@ PRIMARY KEY(Sensor_ID)
 );
 
 insert into source_Sensor values (1,'Sensor_CO_1');		
-insert into source_Sensor values (2,'Sensor_CO_2');		
-insert into source_Sensor values (3,'Sensor_Humidity_1');		
-insert into source_Sensor values (4,'Sensor_Humidity_2');		
-insert into source_Sensor values (5,'Sensor_Temperature_1');		
-insert into source_Sensor values (6,'Sensor_Temperature_2');		
-insert into source_Sensor values (7,'Sensor_NumberOfPassangers_1');		
-insert into source_Sensor values (8,'Sensor_NumberOfPassangers_2');		
+insert into source_Sensor values (2,'Sensor_Humidity_1');		
+insert into source_Sensor values (3,'Sensor_Temperature_1');		
+insert into source_Sensor values (4,'Sensor_NumberOfPassangers_1');		
+				
 
 
 
