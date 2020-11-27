@@ -1,3 +1,5 @@
+//THIS IS ACTUALLY IMPLEMENTED AS A JOB IN THE DATABASE(SO THE CODE IS THE SAME) THAT RUNS ONCE A DAY BUT IT CAN ALSO BE IMPLEMENTED AS THE TRIGGER BELOW
+
 USE [CopenhagenMetro]
 GO
 /****** Object:  Trigger [dbo].[trigger_increment_load]    Script Date: 25/11/2020 08:22:23 ******/
