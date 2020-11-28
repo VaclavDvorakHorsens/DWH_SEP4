@@ -4,6 +4,7 @@
 /*this view servers as a combination of environmental fact values since administrator will be asking for all of them*/	
 
 CREATE OR ALTER VIEW f_EnvironmentalValues_View AS SELECT					
+m.MetroStation_ID as MetroStation_ID,
 m.name as MetroStation,					
 concat (da.CalendarDate,' ', 					
 (select right('0' + CONVERT(VARCHAR(2),t.Hour), 2))
