@@ -24,7 +24,7 @@ delete from CopenhagenMetro_stage.dbo.stage_temp_dim_MetroStation
 insert into CopenhagenMetro_stage.dbo.stage_dim_MetroStation
 (MetroStation_ID, name,ValidFrom,ValidTo)
 /*find added rows*/
-select MetroStation_ID, name,(select LastUpdate+1 from CopenhagenMetro_DWH.dbo.dim_Update), '12/31/9999'  from [CopenhagenMetro].[dbo].[source_MetroStation]
+select MetroStation_ID, name,(SELECT DATEADD (day, +1 ,(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update))), '12/31/9999'  from [CopenhagenMetro].[dbo].[source_MetroStation]
 where MetroStation_ID in 
 ((
 select MetroStation_ID from [CopenhagenMetro].[dbo].[source_MetroStation]
