@@ -6,9 +6,10 @@ import dwh.models.EnvironmentalValues;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.sql.Date;
-import java.util.Calendar;
 import java.util.List;
 
 public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
@@ -59,25 +60,35 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
 
         dbConnectionManager.openConnectionToDWHDatabase();
 
-        String sqlGet = "SELECT TOP 1 (CO2_value, CO2_sensor, humidity_value, humidity_sensor, temperature_value, temperature_sensor," +
-                "passengers_value, passengers_sensor, DateTime) FROM f_Environmental_View ORDER BY DateTime DESC;";
-
+        String sqlGet ="SELECT TOP 1 CO2_value,CO2_sensor,Humidity_value,Humidity_sensor,Temp_value,Temp_sensor, Passangers_value,Passangers_sensor,DateTime FROM f_EnvironmentalValues_View ORDER BY DateTime DESC;" ;
+//"SELECT TOP 1(CO2_value,CO2_sensor,humidity_value,humidity_sensor,temperature_value,temperature_sensor,"
+//                +"passengers_value,passengers_sensor,DateTime) FROM f_Environmental_View ORDER BY DateTime DESC;"
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlGet);
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
-
-        int CO2_value = (int) read.get(0)[0];
+        dbConnectionManager.closeConnectionToDatabase();
+        double CO2_value = (double) read.get(0)[0];
         int CO2_sensor = (int) read.get(0)[1];
-        int humidity_value = (int) read.get(0)[2];
+        double humidity_value = (double) read.get(0)[2];
         int humidity_sensor = (int) read.get(0)[3];
-        int temperature_value = (int) read.get(0)[4];
+        double temperature_value = (double) read.get(0)[4];
         int temperature_sensor = (int) read.get(0)[5];
-        int passenger_value = (int) read.get(0)[6];
+        double passenger_value = (double) read.get(0)[6];
         int passenger_sensor = (int) read.get(0)[7];
-        Date date = (Date) read.get(0)[8];
+        String test=(String)read.get(0)[8];
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        return new EnvironmentalValues(CO2_value, CO2_sensor, humidity_value, humidity_sensor, temperature_value,
-                temperature_sensor, passenger_value, passenger_sensor, date);
+       java.util.Date testDate= null;
+        try {
+            testDate = (java.util.Date) format.parse(test);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //  Date date = (Date) read.get(0)[8];
+
+
+        return new EnvironmentalValues((int)CO2_value, CO2_sensor, (int)humidity_value, humidity_sensor, (int)temperature_value,
+                temperature_sensor, (int)passenger_value, passenger_sensor, testDate);
     }
 
     /*  CONNECT TO THE VIEW */
@@ -88,9 +99,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
 
         List<EnvironmentalValues> values = new ArrayList<>();
 
-        String sqlGet = "SELECT (CO2_value, CO2_sensor, humidity_value, humidity_sensor, temperature_value, temperature_sensor" +
-                "passengers_value, passengers_sensor, DateTime) " +
-                "FROM f_Environmental_View WHERE Datetime >= (?) AND Datetime <= (?);";
+        String sqlGet = " SELECT CO2_value,CO2_sensor,Humidity_value,Humidity_sensor,Temp_value,Temp_sensor, Passangers_value,Passangers_sensor,DateTime FROM f_EnvironmentalValues_View WHERE Datetime >= (?) AND Datetime <= (?);";
 
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlGet);
         try {
