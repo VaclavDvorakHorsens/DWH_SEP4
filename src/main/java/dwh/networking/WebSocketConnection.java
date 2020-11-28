@@ -2,6 +2,7 @@ package dwh.networking;
 
 import dwh.adapters.EnvironmentDataAdapter;
 import dwh.adapters.EnvironmentDataAdapterImpl;
+import dwh.models.Data;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -69,14 +70,21 @@ public class WebSocketConnection implements WebSocket.Listener {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        System.out.println(indented);
-        String a = data.toString();
+        while(true)
+        {
+            convertFromHexToString(indented);
+            System.out.println(indented);
+            String a = data.toString();
+            webSocket.request(1);
+            return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
+        }
+
 
         /*  Still needs to be constructed into environmentalValues object*/
 
     //    environmentDataAdapter.addEnvironmentalValuesToDB(a);
-        webSocket.request(1);
-        return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
+
+
     }
 
     public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {
@@ -84,5 +92,23 @@ public class WebSocketConnection implements WebSocket.Listener {
         return null;
     }
 
+    /**
+     * Mathias
+     * Converts the received Hex data to a String
+     * @return dataObject containing humidity, Temperature & Co2
+     */
+
+
+    public Data convertFromHexToString(String Received){
+        System.out.println("Starting convert: \n" + Received);
+        String[] parts = Received.split("\"");
+        String data = parts[7];
+        int temperature = Integer.parseInt(data.substring(0,4),16)/10;
+        int humidity = Integer.parseInt(data.substring(4,8),16)/10;
+        int co2 = Integer.parseInt(data.substring(8,12),16)/10;
+        Data dataCollection = new Data(temperature,humidity,co2);
+        System.out.println("Data Received From Loriot: "+dataCollection);
+        return dataCollection;
+    }
 
 }
