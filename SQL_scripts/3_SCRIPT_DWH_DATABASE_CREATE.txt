@@ -44,32 +44,37 @@ PRIMARY KEY (S_ID)
 
 /*Create dim table for Time*/
 
-CREATE TABLE dim_Time
-(
-    T_ID       INT  IDENTITY (1, 1)   NOT NULL    PRIMARY KEY
-,   Hour  INT NOT NULL
-,   Minute    INT NOT NULL
-)
+CREATE TABLE dim_Time					
+(						
+    T_ID       INT  IDENTITY (1, 1)   NOT NULL    PRIMARY KEY						
+,   Hour  INT NOT NULL						
+,   Minute    INT NOT NULL,						
+	DayPeriod nvarchar(50)					
+)						
+						
+DECLARE    @startdate  DATETIME						
+DECLARE    @enddate    DATETIME						
+DECLARE    @date       DATETIME						
+						
+SET        @startdate  =    '1/1/2005 00:00:00 AM'   						
+SET        @enddate    =    '1/1/2005 23:59:59 PM'  						
+SET        @date       =     @startdate						
+						
+WHILE    @date <= @enddate						
+BEGIN						
+    INSERT INTO    dim_Time (Hour, Minute,DayPeriod)						
+    VALUES (						
+   	 					
+		 DATEPART(hh, @date)                                               				
+    ,    DATEPART(mi, @date)  ,						
+	CASE WHEN DATEPART(hh, @date) between 8 and 12 THEN 'Morning' 		
+	WHEN DATEPART(hh, @date) between 13 and 17 THEN 'Afternoon' 
+	WHEN DATEPART(hh, @date) between 18 and 22 THEN 'Evening' 
+	ELSE 'Night' END					
+    )						
+    SET  @date  =    DATEADD(mi, 1, @date)																							
+END						
 
-DECLARE    @startdate  DATETIME
-DECLARE    @enddate    DATETIME
-DECLARE    @date       DATETIME
-
-SET        @startdate  =    '1/1/2005 12:00:00 AM'   
-SET        @enddate    =    '1/1/2005 23:59:59 PM'  
-SET        @date       =     @startdate
-
-WHILE    @date <= @enddate
-BEGIN
-    INSERT INTO    dim_Time (Hour, Minute)
-    VALUES (
-    
- DATEPART(hh, @date)                                               
-    ,    DATEPART(mi, @date)                                               
-    )
-    SET  @date  =    DATEADD(mi, 1, @date) 
-
-END
 
 
 
