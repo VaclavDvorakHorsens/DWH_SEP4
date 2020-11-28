@@ -5,19 +5,19 @@
 
 CREATE OR ALTER VIEW f_EnvironmentalValues_View AS SELECT					
 m.MetroStation_ID as MetroStation_ID,
-m.name as MetroStation,					
+m.name as MetroStation_name,					
 concat (da.CalendarDate,' ', 					
 (select right('0' + CONVERT(VARCHAR(2),t.Hour), 2))
 ,':', (select right('0' + CONVERT(VARCHAR(2),t.Minute), 2)))					
 as DateTime ,					
 sCO2.Sensor_ID as CO2_sensor,					
-dbo.f_CO2_EnvironmentValue.co2_value,			
+dbo.f_CO2_EnvironmentValue.co2_value as CO2_value,			
 sTmp.Sensor_ID as Temp_sensor,					
-dbo.f_Temperature_EnvironmentValue.Temp_Value,					
+dbo.f_Temperature_EnvironmentValue.Temp_Value as Temp_value,					
 sHu.Sensor_ID as Humidity_sensor,					
-dbo.f_Humidity_EnvironmentValue.Humidity_Value,					
+dbo.f_Humidity_EnvironmentValue.Humidity_Value as Humidity_value,					
 sPsg.Sensor_ID as Passangers_sensor,					
-dbo.f_Passenger_EnvironmentValue.Passenger_Value					
+dbo.f_Passenger_EnvironmentValue.Passenger_Value as Passangers_value					
 FROM dbo.f_CO2_EnvironmentValue					
 JOIN dbo.f_Temperature_EnvironmentValue ON dbo.f_Temperature_EnvironmentValue.Date_ID = dbo.f_CO2_EnvironmentValue.Date_ID AND
 dbo.f_Temperature_EnvironmentValue.T_ID = dbo.f_CO2_EnvironmentValue.T_ID					
