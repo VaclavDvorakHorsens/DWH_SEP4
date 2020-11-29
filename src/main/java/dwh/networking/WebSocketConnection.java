@@ -3,47 +3,50 @@ package dwh.networking;
 import dwh.adapters.EnvironmentDataAdapter;
 import dwh.adapters.EnvironmentDataAdapterImpl;
 import dwh.models.Data;
+import dwh.models.EnvironmentalValues;
+import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
 
 public class WebSocketConnection implements WebSocket.Listener {
     private final CountDownLatch latch;
-    private final EnvironmentDataAdapter environmentDataAdapter;
+    private  EnvironmentDataAdapter environmentDataAdapter;
 
 
-
-
-    public WebSocketConnection()
-    { this.latch = new CountDownLatch(1);
-      this.environmentDataAdapter = new EnvironmentDataAdapterImpl();
+    public WebSocketConnection() {
+        this.latch = new CountDownLatch(1);
+        this.environmentDataAdapter = new EnvironmentDataAdapterImpl();
     }
 
     @Override
     public void onOpen(WebSocket webSocket) {
         System.out.println("Open connection");
-        webSocket.sendText("public wss test",true);
-       /* webSocket.sendBinary(bbuf,true);*/
+        webSocket.sendText("public wss test", true);
+        /* webSocket.sendBinary(bbuf,true);*/
         webSocket.request(1);
 
         WebSocket.Listener.super.onOpen(webSocket);
     }
 
 
-    public void onError(WebSocket webSocket, Throwable error)
-    {
-        System.out.println("A " + error.getCause() + " exception was thrown.");
-        System.out.println("Message: " + error.getLocalizedMessage());
+    public void onError(WebSocket webSocket, Throwable error) {
+       // System.out.println("A " + error.getCause() + " exception was thrown.");
+        System.out.println(error.getMessage());
+        error.printStackTrace();
+        //System.out.println("Message: " + error.getLocalizedMessage());
         webSocket.abort();
     }
 
-    public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason)
-    {
+    public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
         System.out.println("WebSocket closed!");
         System.out.println("Status:" + statusCode + " Reason: " + reason);
         return new CompletableFuture().completedFuture("onClose() completed.").thenAccept(System.out::println);
@@ -64,25 +67,22 @@ public class WebSocketConnection implements WebSocket.Listener {
     }
 
     public CompletionStage<?> onText​(WebSocket webSocket, CharSequence data, boolean last) {
-        String indented = null;
-        try {
-            indented = (new JSONObject(data.toString())).toString(4);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        while(true)
-        {
-            convertFromHexToString(indented);
+        webSocket.request(1);
+        String indented = data.toString();
+        handleData(indented);
+
+     //   while (true) {
+            //convertFromHexToString(indented);
+           // parseAndInsertData(indented);
             System.out.println(indented);
-            String a = data.toString();
-            webSocket.request(1);
+         //   String a = data.toString();
             return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
-        }
+       // }
 
 
         /*  Still needs to be constructed into environmentalValues object*/
 
-    //    environmentDataAdapter.addEnvironmentalValuesToDB(a);
+        //    environmentDataAdapter.addEnvironmentalValuesToDB(a);
 
 
     }
@@ -92,23 +92,78 @@ public class WebSocketConnection implements WebSocket.Listener {
         return null;
     }
 
-    /**
-     * Mathias
-     * Converts the received Hex data to a String
-     * @return dataObject containing humidity, Temperature & Co2
-     */
+//    /**
+//     * Mathias
+//     * Converts the received Hex data to a String
+//     *
+//     * @return dataObject containing humidity, Temperature & Co2
+//     */
+//
+//
+//    public Data convertFromHexToString(String Received) {
+//     //   System.out.println("Starting convert: \n" + Received);
+//        String[] parts = Received.split("\"");
+//        String data = parts[7];
+//        int temperature = Integer.parseInt(data.substring(0, 4), 16) / 10;
+//        int humidity = Integer.parseInt(data.substring(4, 8), 16) / 10;
+//        int co2 = Integer.parseInt(data.substring(8, 12), 16) / 10;
+//        Data dataCollection = new Data(temperature, humidity, co2);
+//       // System.out.println("Data Received From Loriot: " + dataCollection);
+//
+//        return dataCollection;
+//    }
 
+    private void handleData(String jsonTelegram) {
+//        parse the telegram from String to JSONObject
+        var parser = new JSONParser();
+        JSONObject json = null;
+        try {
+           json = (JSONObject) parser.parse(jsonTelegram);
+        } catch (ParseException e) {
+            //   LOGGER.severe(e.toString());
+            System.out.println("Something went wrong!");
+            return;
+        }
 
-    public Data convertFromHexToString(String Received){
-        System.out.println("Starting convert: \n" + Received);
-        String[] parts = Received.split("\"");
-        String data = parts[7];
-        int temperature = Integer.parseInt(data.substring(0,4),16)/10;
-        int humidity = Integer.parseInt(data.substring(4,8),16)/10;
-        int co2 = Integer.parseInt(data.substring(8,12),16)/10;
-        Data dataCollection = new Data(temperature,humidity,co2);
-        System.out.println("Data Received From Loriot: "+dataCollection);
-        return dataCollection;
+        if (json == null) {
+            System.out.println("Failed to parse json telegram");
+            return;
+        }
+
+//        check the type of the telegram
+       // try {
+            if (!json.get("cmd").equals("rx")) return;
+      //  } catch (JSONException e) {
+           // e.printStackTrace();
+       // }
+
+//        extract data raw
+        String dataAsHex = null;
+       // try {
+            dataAsHex = (String) json.get("data");
+       // } catch (JSONException e) {
+          //  e.printStackTrace();
+       // }
+
+//        check id data field is null
+        if (dataAsHex == null) {
+            System.out.println("data field in telegram is null");
+            return;
+        }
+
+//        spit data string every 4 characters and store it in an array
+        //String[] measurementsAsHex = dataAsHex.split("(?<=\\G....)");
+
+//        extract sensor data from the array
+        int temperature = Integer.parseInt(dataAsHex.substring(0, 4), 16) / 10;
+        int humidity = Integer.parseInt(dataAsHex.substring(4, 8), 16) / 10;
+        int co2 = Integer.parseInt(dataAsHex.substring(8, 12), 16) / 10;
+        Data dataCollection = new Data(temperature, humidity, co2);
+        //int lightAsInt = Integer.parseInt(measurementsAsHex[3], 16);
+        System.out.println("Data Received From Loriot: " + dataCollection);
+
+        // sending data to the database
+       environmentDataAdapter.addEnvironmentalValuesToDB(new EnvironmentalValues(co2,1,humidity,1,temperature,1,0,0,new Date()));
+
     }
-
 }
