@@ -1,7 +1,7 @@
+//THIS IS A SCRIPT FOR DELETING DATA FROM DATABASES, ONLY FOR TESTING PURPOSES!!!!!!!!!!!
+
 use copenhagenmetro
-
 delete from source_EnvironmentValues
-
 
 
 use copenhagenmetro_dwh
