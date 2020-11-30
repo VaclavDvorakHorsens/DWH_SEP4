@@ -95,7 +95,8 @@ MetroStation_ID int,
 DateFrom DATETIME,
 DateTo DATETIME,
 PRIMARY KEY(Sensor_ID, DateFrom),
-FOREIGN KEY (Sensor_ID) REFERENCES source_Sensor(Sensor_ID)
+FOREIGN KEY (Sensor_ID) REFERENCES source_Sensor(Sensor_ID),
+FOREIGN KEY (MetroStation_ID) REFERENCES source_MetroStation(MetroStation_ID)
 );
 /*insert data*/
 insert into source_MetroStation_Sensor (Sensor_ID,MetroStation_ID,DateFrom,DateTo) values (1,1,'2019-01-01','2999-12-31');
@@ -127,7 +128,8 @@ MetroStation_ID int,
 DateFrom DATETIME,
 DateTo DATETIME,
 PRIMARY KEY(Device_ID, DateFrom),
-FOREIGN KEY (Device_ID) REFERENCES source_Device(Device_ID)
+FOREIGN KEY (Device_ID) REFERENCES source_Device(Device_ID),
+FOREIGN KEY (MetroStation_ID) REFERENCES source_MetroStation(MetroStation_ID)
 );
 /*insert dummy data*/
 insert into source_MetroStation_Device (Device_ID,MetroStation_ID,DateFrom) values (1,1,'2019-01-01');
