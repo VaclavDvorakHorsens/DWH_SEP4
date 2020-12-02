@@ -53,9 +53,11 @@ public class WebSocketConnection implements WebSocket.Listener {
     public void sendDownLink(int value)
     {
         JSONObject jsonTelegram = new JSONObject();
+        String tomaDevice = "0004A30B00259F36";
+        String eduardDevice = "0004A30B00251192";
 
         jsonTelegram.put("cmd", "tx");
-        jsonTelegram.put("EUI", "0004A30B00259F36");
+        jsonTelegram.put("EUI", tomaDevice);
         jsonTelegram.put("port", 2);
         jsonTelegram.put("confirmed", false);
         jsonTelegram.put("data", String.valueOf(value));
