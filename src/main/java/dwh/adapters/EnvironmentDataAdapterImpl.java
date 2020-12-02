@@ -60,9 +60,8 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
 
         dbConnectionManager.openConnectionToDWHDatabase();
 
-        String sqlGet ="SELECT TOP 1 CO2_value,CO2_sensor,Humidity_value,Humidity_sensor,Temp_value,Temp_sensor, Passangers_value,Passangers_sensor,DateTime FROM f_EnvironmentalValues_View ORDER BY DateTime DESC;" ;
-//"SELECT TOP 1(CO2_value,CO2_sensor,humidity_value,humidity_sensor,temperature_value,temperature_sensor,"
-//                +"passengers_value,passengers_sensor,DateTime) FROM f_Environmental_View ORDER BY DateTime DESC;"
+        String sqlGet ="SELECT TOP 1 CO2_value,CO2_sensor,Humidity_value,Humidity_sensor,Temp_value,Temp_sensor, Passangers_value, " +
+                "Passangers_sensor,DateTime FROM f_EnvironmentalValues_View ORDER BY DateTime DESC;" ;
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlGet);
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
@@ -80,12 +79,10 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
 
        java.util.Date testDate= null;
         try {
-            testDate = (java.util.Date) format.parse(test);
+            testDate = format.parse(test);
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        //  Date date = (Date) read.get(0)[8];
-
 
         return new EnvironmentalValues((int)CO2_value, CO2_sensor, (int)humidity_value, humidity_sensor, (int)temperature_value,
                 temperature_sensor, (int)passenger_value, passenger_sensor, testDate);

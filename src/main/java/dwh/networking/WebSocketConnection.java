@@ -4,12 +4,12 @@ import dwh.adapters.EnvironmentDataAdapter;
 import dwh.adapters.EnvironmentDataAdapterImpl;
 import dwh.models.Data;
 import dwh.models.EnvironmentalValues;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.WebSocket;
 import java.nio.ByteBuffer;
 import java.util.Date;
@@ -18,25 +18,51 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.CountDownLatch;
 
 public class WebSocketConnection implements WebSocket.Listener {
+
     private final CountDownLatch latch;
     private  EnvironmentDataAdapter environmentDataAdapter;
+    private WebSocket server = null;
+    private static WebSocketConnection instance;
 
-
-    public WebSocketConnection() {
+    private WebSocketConnection()
+    {
         this.latch = new CountDownLatch(1);
         this.environmentDataAdapter = new EnvironmentDataAdapterImpl();
+
+        HttpClient client = HttpClient.newHttpClient();
+        CompletableFuture<WebSocket> ws = client.newWebSocketBuilder()
+                .buildAsync(URI.create("wss://iotnet.cibicom.dk/app?token=vnoTOgAAABFpb3RuZXQuY2liaWNvbS5ka2z21adiqWKYdLsgxiOUnKc="), this);
+        server = ws.join();
+    }
+
+    public static WebSocketConnection getInstance() {
+        if(instance == null)
+        {
+            instance = new WebSocketConnection();
+        }
+
+        return instance;
     }
 
     @Override
     public void onOpen(WebSocket webSocket) {
         System.out.println("Open connection");
-        webSocket.sendText("public wss test", true);
-        /* webSocket.sendBinary(bbuf,true);*/
         webSocket.request(1);
-
-        WebSocket.Listener.super.onOpen(webSocket);
     }
 
+    public void sendDownLink(int value)
+    {
+        JSONObject jsonTelegram = new JSONObject();
+
+        jsonTelegram.put("cmd", "tx");
+        jsonTelegram.put("EUI", "0004A30B00259F36");
+        jsonTelegram.put("port", 2);
+        jsonTelegram.put("confirmed", false);
+        jsonTelegram.put("data", String.valueOf(value));
+        jsonTelegram.put("appid", "BE7A133A");
+
+        server.sendText(jsonTelegram.toString(), true);
+    }
 
     public void onError(WebSocket webSocket, Throwable error) {
        // System.out.println("A " + error.getCause() + " exception was thrown.");
@@ -71,18 +97,8 @@ public class WebSocketConnection implements WebSocket.Listener {
         String indented = data.toString();
         handleData(indented);
 
-     //   while (true) {
-            //convertFromHexToString(indented);
-           // parseAndInsertData(indented);
             System.out.println(indented);
-         //   String a = data.toString();
             return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
-       // }
-
-
-        /*  Still needs to be constructed into environmentalValues object*/
-
-        //    environmentDataAdapter.addEnvironmentalValuesToDB(a);
 
 
     }
