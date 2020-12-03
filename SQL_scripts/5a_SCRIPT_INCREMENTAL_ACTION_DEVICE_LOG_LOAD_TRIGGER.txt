@@ -1,0 +1,53 @@
+USE [CopenhagenMetro]
+GO
+/****** Object:  Trigger [dbo].[trigger_increment_load]    Script Date: 25/11/2020 08:22:23 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE OR ALTER TRIGGER [dbo].[trigger_increment_load_Action_Device_Log]
+ON  [dbo].[source_Action_Device_Log]
+AFTER INSERT
+AS
+BEGIN
+
+
+
+/*CLEAN BEFORE INCREMENTAL LOAD*/
+delete from CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log
+
+
+/*INCREMENTAL LOAD for stage fact actions*/
+insert into CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log([Device_ID],[Action_ID],[dateAndTime])
+select d.[Device_ID], a.[Action_ID], al.[dateAndTime] from
+[CopenhagenMetro].[dbo].[source_Action_Device_Log] al
+join [CopenhagenMetro].[dbo].[source_Device] d on d.Device_ID = al.Device_ID
+join [CopenhagenMetro].[dbo].[source_Action] a on a.Action_ID= al.Action_ID AND al.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);			
+
+
+/*Update surrogate keys*/
+ update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log
+  set A_ID=(Select A_ID from CopenhagenMetro_DWH.dbo.dim_Action a where a.Action_ID=stage_f_Action_Device_Log.Action_ID);
+  update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log
+  set D_ID=(Select D_ID from CopenhagenMetro_DWH.dbo.dim_Device d where d.Device_ID=stage_f_Action_Device_Log.Device_ID);
+ update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log
+ set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate = 
+TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log.dateAndTime));
+ update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log
+ set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour= 
+ (Format(dateAndTime ,'%H')) AND t.Minute=(Format(dateAndTime, 'mm')));
+
+
+/*INCREMENT LOAD for fact tables from stage fact tables*/
+/*Actions*/
+insert into  CopenhagenMetro_DWH.dbo.f_Action_Device_Log (A_ID, D_ID,T_ID,Date_ID)	
+select A_ID, D_ID,T_ID,Date_ID	
+from CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log;
+
+
+/*INCREMENTAL LOAD, set last incremental load date*/
+/*after incremental load*/
+/*update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT DATEADD (hour, +1 ,GETDATE()))*/
+update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT GETDATE())
+
+END

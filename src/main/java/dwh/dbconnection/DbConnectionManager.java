@@ -7,11 +7,11 @@ public class DbConnectionManager {
 
 
     String url = "jdbc:sqlserver://";
-    String driver = "34.66.112.80;";
+    String driver = "LAPTOP-EHLE76UU;";/*"34.66.112.80;";*/
     String sourceDatabase = "databaseName=copenhagenmetro";
     String dataWarehouse = "databaseName=copenhagenmetro_dwh";
-    String username = "sqlserver";
-    String password = "admin";
+    String username = /*"sqlserver"*/ "vasek";
+    String password = /*"admin"*/"vasek";
     Connection connection;
     PreparedStatement preparedStatement;
     ResultSet resultSet;
