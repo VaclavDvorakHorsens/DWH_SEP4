@@ -132,4 +132,41 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
     }
 
 
+    /**
+     *
+     * @param action an integer value that will be inserted into the database. This value represents the state of the shaft that the android application has sent
+     */
+    @Override
+    public void setAction(int action) {
+        dbConnectionManager.openConnectionToDWHDatabase();
+            // TODO just guessing the collum names
+
+        String sqlInsert = "INSERT INTO source_Action_Device_Log" +
+                " (shaftDesiredStatus,timestamp) VALUES (?,?);";
+        PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlInsert);
+        try {
+
+            preparedStatement.setString(1, String.valueOf(action));
+            preparedStatement.setString(9, String.valueOf(new Timestamp(System.currentTimeMillis())));
+
+            dbConnectionManager.addToDatabase(preparedStatement);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        dbConnectionManager.closeConnectionToDatabase();
+    }
+
+    @Override
+    public int getAction() {
+
+        dbConnectionManager.openConnectionToDWHDatabase();
+        String sqlGet ="SELECT TOP 1 shaftCurrent FROM source_Action_Device_Log" ;
+        PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlGet);
+        ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
+        dbConnectionManager.closeConnectionToDatabase();
+        int shaftCurrentPos = (int) read.get(0)[0];
+        return shaftCurrentPos;
+    }
 }
