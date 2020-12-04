@@ -138,16 +138,14 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
      */
     @Override
     public void setAction(int action) {
-        dbConnectionManager.openConnectionToDWHDatabase();
-            // TODO just guessing the collum names
-
+        dbConnectionManager.openConnectionToSourceDatabase();
         String sqlInsert = "INSERT INTO source_Action_Device_Log" +
-                " (shaftDesiredStatus,timestamp) VALUES (?,?);";
+                " (Device_ID,Action_ID,dateAndTime) VALUES (?,?,?);";
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlInsert);
         try {
-
-            preparedStatement.setString(1, String.valueOf(action));
-            preparedStatement.setString(9, String.valueOf(new Timestamp(System.currentTimeMillis())));
+            preparedStatement.setString(1, String.valueOf(1));
+            preparedStatement.setString(2, String.valueOf(action));
+            preparedStatement.setString(3, String.valueOf(new Timestamp(System.currentTimeMillis())));
 
             dbConnectionManager.addToDatabase(preparedStatement);
 

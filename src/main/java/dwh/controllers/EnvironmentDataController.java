@@ -83,7 +83,7 @@ public class EnvironmentDataController {
 
     }
 
-    @PostMapping("/PostAction")
+    @GetMapping("/PostAction")
     public ResponseEntity<String> postAction(@RequestParam String action) {
         // value 0= closed 1 = open
         // might need to decode URL encoding

@@ -27,7 +27,7 @@ join [CopenhagenMetro].[dbo].[source_Action] a on a.Action_ID= al.Action_ID AND 
 
 /*Update surrogate keys*/
  update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log
-  set A_ID=(Select A_ID from CopenhagenMetro_DWH.dbo.dim_Action a where a.Action_ID=stage_f_Action_Device_Log.Action_ID);
+  set A_ID=(Select A_ID from CopenhagenMetro_DWH.dbo.dim_Action a where a.Action_ID=stage_f_Action_Device_Log.Action_ID AND a.ValidTo='9999-12-31');
   update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log
   set D_ID=(Select D_ID from CopenhagenMetro_DWH.dbo.dim_Device d where d.Device_ID=stage_f_Action_Device_Log.Device_ID);
  update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log
