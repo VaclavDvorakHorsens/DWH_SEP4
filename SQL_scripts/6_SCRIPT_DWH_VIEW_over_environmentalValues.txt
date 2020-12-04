@@ -1,9 +1,7 @@
+/*this is a DWH view for Android to get latest environmental values. it shows only the latest value*/
 
 
-
-/*this view servers as a combination of environmental fact values since administrator will be asking for all of them*/	
-
-CREATE OR ALTER VIEW f_EnvironmentalValues_View AS SELECT					
+CREATE OR ALTER VIEW f_EnvironmentalValues_View AS SELECT TOP 1					
 m.MetroStation_ID as MetroStation_ID,
 m.name as MetroStation_name,					
 concat (da.CalendarDate,' ', 					
@@ -32,3 +30,15 @@ JOIN CopenhagenMetro_DWH.dbo.dim_Sensor sCO2 on sCO2.S_ID=dbo.f_CO2_EnvironmentV
 JOIN CopenhagenMetro_DWH.dbo.dim_Sensor sHu on sHu.S_ID=dbo.f_Humidity_EnvironmentValue.S_ID
 JOIN CopenhagenMetro_DWH.dbo.dim_Sensor sTmp on sTmp.S_ID=dbo.f_Temperature_EnvironmentValue.S_ID
 JOIN CopenhagenMetro_DWH.dbo.dim_Sensor sPsg on sPsg.S_ID=dbo.f_Passenger_EnvironmentValue.S_ID
+order by (concat (da.CalendarDate,' ', 					
+(select right('0' + CONVERT(VARCHAR(2),t.Hour), 2))
+,':', (select right('0' + CONVERT(VARCHAR(2),t.Minute), 2)),':','00')) DESC
+
+
+
+
+/*this is just a possible update in case that view should show more data, for example one day back*/
+/*where (concat (da.CalendarDate,' ', 					
+(select right('0' + CONVERT(VARCHAR(2),t.Hour), 2))
+,':', (select right('0' + CONVERT(VARCHAR(2),t.Minute), 2)),':','00'))>(SELECT GETDATE()-1)
+*/

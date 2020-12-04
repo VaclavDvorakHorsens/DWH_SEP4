@@ -16,7 +16,7 @@ update stage_dim_MetroStation set ValidFrom=(SELECT GETDATE());
 update stage_dim_MetroStation set ValidTo='9999-12-31';
 
 
-/*Fill the stage table for Actionn from the CopenhagenMetro database*/
+/*Fill the stage table for Action from the CopenhagenMetro database*/
 insert into [stage_dim_Action](
 [Action_ID],[name])
 select 
@@ -25,6 +25,10 @@ select
 [CopenhagenMetro].[dbo].[source_Action];
 /*Clean the table from null and empty values*/
 update stage_dim_Action set name='NO VALUE' where name is Null;
+/*Set intial ValidFrom and ValidTo*/
+update stage_dim_Action set ValidFrom=(SELECT GETDATE());
+update stage_dim_Action set ValidTo='9999-12-31';
+
 
 
 
@@ -65,7 +69,7 @@ select
 
 
 
-/*2.INITIAL LOAD*/		
+/*INITIAL LOAD*/		
 /*Fill the dim table for Device from the CopenhagenMetro_stage database*/		
 insert into [dim_Device](		
 [Device_ID],[name])		
@@ -75,7 +79,7 @@ select
 [CopenhagenMetro_stage].[dbo].[stage_dim_Device];		
 
 
-/*2.INITIAL LOAD*/				
+/*INITIAL LOAD*/				
 /*Fill the dim table for Sensor from the CopenhagenMetro_stage database*/				
 insert into [dim_Sensor](				
 [Sensor_ID],[name])				
@@ -84,7 +88,7 @@ select
 [CopenhagenMetro_stage].[dbo].[stage_dim_Sensor].[name] from				
 [CopenhagenMetro_stage].[dbo].[stage_dim_Sensor];				
 
-/*2.INITIAL LOAD*/		
+/*INITIAL LOAD*/		
 /*Fill the dim table for Action from the CopenhagenMetro_stage database*/		
 use CopenhagenMetro_DWH;		
 insert into [dim_Action](		
@@ -103,7 +107,7 @@ insert into dim_Update (LastUpdate) VALUES (GETDATE());
 
 
 
-/*3.INITIAL LOAD*/
+/*INITIAL LOAD to stage CO2 environmental fact table*/
 use CopenhagenMetro_stage;
 insert into [stage_f_CO2_EnvironmentValue]([MetroStation_ID],[Sensor_ID],[CO2_value],[dateAndTime])
 select m.[MetroStation_ID], s.[Sensor_ID], e.[CO2_value], e.[dateAndTime] from
@@ -127,7 +131,7 @@ TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue.dateAnd
 
 
 
-
+/*INITIAL LOAD to stage humidity environmental fact table*/
 insert into [stage_f_Humidity_EnvironmentValue]([MetroStation_ID],[Sensor_ID],[Humidity_value],[dateAndTime])		
 select m.[MetroStation_ID], s.[Sensor_ID], e.[Humidity_value], e.[dateAndTime] from		
 [CopenhagenMetro].[dbo].[source_EnvironmentValues] e		
@@ -152,7 +156,7 @@ TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue.da
 
 
 
-/*3.INITIAL LOAD*/				
+/*INITIAL LOAD to stage passenger environmental fact table*/			
 insert into [stage_f_Passenger_EnvironmentValue]([MetroStation_ID],[Sensor_ID],[Passenger_value],[dateAndTime])				
 select m.[MetroStation_ID], s.[Sensor_ID], e.[numberOfPassengers_value], e.[dateAndTime] from				
 [CopenhagenMetro].[dbo].[source_EnvironmentValues] e				
@@ -175,7 +179,7 @@ TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue.d
 
 
 
-/*3.INITIAL LOAD*/			
+/*INITIAL LOAD to stage Temperature environmental fact table*/			
 insert into [stage_f_Temperature_EnvironmentValue]([MetroStation_ID],[Sensor_ID],[Temp_value],[dateAndTime])			
 select m.[MetroStation_ID], s.[Sensor_ID], e.[Temperature_value], e.[dateAndTime] from			
 [CopenhagenMetro].[dbo].[source_EnvironmentValues] e			
@@ -198,56 +202,56 @@ TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Temperature_EnvironmentValue
 
 
 
-/*3.INITIAL LOAD*/		
-insert into [stage_f_ActionLog]([Device_ID],[Action_ID],[valueSetInDevice],[dateAndTime])		
-select d.[Device_ID], a.[Action_ID], al.[valueSetInDevice], al.[dateAndTime] from		
-[CopenhagenMetro].[dbo].[source_Action_Device] al		
+/*INITIAL LOAD to stage action log fact table*/		
+insert into [stage_f_Action_Device_Log]([Device_ID],[Action_ID],[dateAndTime])		
+select d.[Device_ID], a.[Action_ID], al.[dateAndTime] from		
+[CopenhagenMetro].[dbo].[source_Action_Device_Log] al		
 join [CopenhagenMetro].[dbo].[source_Device] d on d.Device_ID = al.Device_ID		
 join [CopenhagenMetro].[dbo].[source_Action] a on a.Action_ID= al.Action_ID;		
 		
 		
 /*Update surrogate keys*/		
- update CopenhagenMetro_stage.dbo.stage_f_ActionLog		
-  set A_ID=(Select A_ID from CopenhagenMetro_DWH.dbo.dim_Action a where a.Action_ID=stage_f_ActionLog.Action_ID);		
-  update CopenhagenMetro_stage.dbo.stage_f_ActionLog		
-  set D_ID=(Select D_ID from CopenhagenMetro_DWH.dbo.dim_Device d where d.Device_ID=stage_f_ActionLog.Device_ID);		
- update CopenhagenMetro_stage.dbo.stage_f_ActionLog		
+ update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log		
+  set A_ID=(Select A_ID from CopenhagenMetro_DWH.dbo.dim_Action a where a.Action_ID=stage_f_Action_Device_Log.Action_ID);		
+  update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log		
+  set D_ID=(Select D_ID from CopenhagenMetro_DWH.dbo.dim_Device d where d.Device_ID=stage_f_Action_Device_Log.Device_ID);		
+ update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log		
  set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate = 		
-TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_ActionLog.dateAndTime));		
- update CopenhagenMetro_stage.dbo.stage_f_ActionLog		
+TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log.dateAndTime));		
+ update CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log		
  set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour= 		
  (Format(dateAndTime ,'%H')) AND t.Minute=(Format(dateAndTime, 'mm')));		
 		
 
-/*4.INITIAL LOAD*/		
+/*INITIAL LOAD to DWH CO2 environmental fact table*/		
 use CopenhagenMetro_DWH;
 insert into f_CO2_EnvironmentValue (M_ID, Date_ID,T_ID,S_ID, CO2_value)		
 select M_ID, Date_ID,T_ID,S_ID, CO2_value		
 from CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue;		
 
 
-/*4.INITIAL LOAD*/		
+/*INITIAL LOAD to DWH Temperature environmental fact table*/			
 insert into f_Temperature_EnvironmentValue (M_ID, Date_ID,T_ID,S_ID,Temp_Value)		
 select M_ID, Date_ID,T_ID,S_ID, Temp_value		
 from CopenhagenMetro_stage.dbo.stage_f_Temperature_EnvironmentValue;	
 
-/*4.INITIAL LOAD*/		
+/*INITIAL LOAD to DWH Humidity environmental fact table*/		
 insert into f_Humidity_EnvironmentValue (M_ID, Date_ID,T_ID,S_ID,Humidity_Value)		
 select M_ID, Date_ID,T_ID,S_ID, Humidity_value		
 from CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue;		
 	
 
-/*4.INITIAL LOAD*/		
+/*INITIAL LOAD to DWH passenger environmental fact table*/			
 insert into f_Passenger_EnvironmentValue (M_ID, Date_ID,T_ID,S_ID, Passenger_value)		
 select M_ID, Date_ID,T_ID,S_ID, Passenger_value		
 from CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue;		
 
 
-/*4.INITIAL LOAD*/		
-insert into  f_ActionLog (A_ID, D_ID,T_ID,Date_ID, valueSetInDevice)		
-select A_ID, D_ID,T_ID,Date_ID, valueSetInDevice		
-from CopenhagenMetro_stage.dbo.stage_f_ActionLog;		
+/*INITIAL LOAD to DWH Action_Device_Log fact table*/			
+insert into  f_Action_Device_Log (A_ID, D_ID,T_ID,Date_ID)		
+select A_ID, D_ID,T_ID,Date_ID		
+from CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log;		
 
 
-/*5.set last update*/
-update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT DATEADD (hour, +1 ,GETDATE()))
+/*set last update*/
+update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(GETDATE())

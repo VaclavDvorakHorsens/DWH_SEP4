@@ -20,7 +20,7 @@ ValidTo DATE,
 PRIMARY KEY (M_ID)
 );
 
-/*Create dwh table for Device*/
+/*Create dwh table for Device (Shaft)*/
 Create table dim_Device
 (
 D_ID int IDENTITY(1,1),
@@ -124,6 +124,8 @@ CREATE TABLE [dim_Action]
 [A_ID] [int] IDENTITY(1,1), 
 Action_ID int,
 name nvarchar (50),
+ValidFrom DATE,
+ValidTo DATE,
 PRIMARY KEY (A_ID)
 )
 
@@ -182,13 +184,12 @@ Passenger_Value float
 
 
 /*create fact table for Actions performed on devices values*/
-Create table f_ActionLog
+Create table f_Action_Device_Log
 (
 A_ID int FOREIGN KEY REFERENCES dim_Action(A_ID),
 D_ID int FOREIGN KEY REFERENCES dim_Device(D_ID),
 T_ID int FOREIGN KEY REFERENCES dim_Time(T_ID),
 Date_ID int FOREIGN KEY REFERENCES dim_Date(Date_ID),
-valueSetInDevice float
 );
 
 
