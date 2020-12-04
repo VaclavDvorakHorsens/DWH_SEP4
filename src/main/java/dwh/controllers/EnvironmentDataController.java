@@ -4,6 +4,7 @@ import dwh.adapters.EnvironmentDataAdapter;
 import dwh.adapters.EnvironmentDataAdapterImpl;
 import dwh.models.Date;
 import dwh.models.EnvironmentalValues;
+import dwh.networking.WebSocketConnection;
 import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -93,6 +94,18 @@ public class EnvironmentDataController {
         if (shaftAction == 0 || shaftAction == 1) {
                 environmentDataAdapter.setAction(shaftAction);
             environmentDataAdapter.setAction(shaftAction);
+
+            WebSocketConnection webSocketConnection = WebSocketConnection.getInstance();
+
+            if(shaftAction == 0)
+            {
+                webSocketConnection.sendDownLink(14);
+            }
+            else if(shaftAction == 1)
+            {
+                webSocketConnection.sendDownLink(28);
+            }
+
             HttpHeaders headers = new HttpHeaders();
             headers.add("PostAction", "success");
 
