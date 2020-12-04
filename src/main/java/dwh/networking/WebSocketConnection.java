@@ -4,6 +4,8 @@ import dwh.adapters.EnvironmentDataAdapter;
 import dwh.adapters.EnvironmentDataAdapterImpl;
 import dwh.models.Data;
 import dwh.models.EnvironmentalValues;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -100,7 +102,14 @@ public class WebSocketConnection implements WebSocket.Listener {
         handleData(indented);
 
             System.out.println(indented);
+         //   String a = data.toString();
             return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
+       // }
+
+
+        /*  Still needs to be constructed into environmentalValues object*/
+
+        //    environmentDataAdapter.addEnvironmentalValuesToDB(a);
 
 
     }
@@ -148,20 +157,12 @@ public class WebSocketConnection implements WebSocket.Listener {
             return;
         }
 
-//        check the type of the telegram
-       // try {
             if (!json.get("cmd").equals("rx")) return;
-      //  } catch (JSONException e) {
-           // e.printStackTrace();
-       // }
 
 //        extract data raw
         String dataAsHex = null;
-       // try {
+
             dataAsHex = (String) json.get("data");
-       // } catch (JSONException e) {
-          //  e.printStackTrace();
-       // }
 
 //        check id data field is null
         if (dataAsHex == null) {
@@ -177,7 +178,6 @@ public class WebSocketConnection implements WebSocket.Listener {
         int humidity = Integer.parseInt(dataAsHex.substring(4, 8), 16) / 10;
         int co2 = Integer.parseInt(dataAsHex.substring(8, 12), 16) / 10;
         Data dataCollection = new Data(temperature, humidity, co2);
-        //int lightAsInt = Integer.parseInt(measurementsAsHex[3], 16);
         System.out.println("Data Received From Loriot: " + dataCollection);
 
         // sending data to the database
