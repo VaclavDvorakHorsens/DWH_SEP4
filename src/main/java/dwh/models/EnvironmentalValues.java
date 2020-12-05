@@ -17,6 +17,19 @@ public class EnvironmentalValues {
     private int numberOfPassengers_Sensor_ID;
 
     private Date dateAndTime;
+    private int shaftPos;
+
+    public EnvironmentalValues(int CO2_value, int CO2_Sensor_ID, int humidity_value, int humidity_Sensor_ID, int temperature_value, int temperature_Sensor_ID, int numberOfPassengers_value, int numberOfPassengers_Sensor_ID, int shaftPos,Date dateAndTime) {
+        this.CO2_value = CO2_value;
+        this.CO2_Sensor_ID = CO2_Sensor_ID;
+        this.humidity_value = humidity_value;
+        this.humidity_Sensor_ID = humidity_Sensor_ID;
+        this.temperature_value = temperature_value;
+        this.temperature_Sensor_ID = temperature_Sensor_ID;
+        this.numberOfPassengers_value = numberOfPassengers_value;
+        this.numberOfPassengers_Sensor_ID = numberOfPassengers_Sensor_ID;
+        this.dateAndTime = dateAndTime;
+    }
 
     public EnvironmentalValues(int CO2_value, int CO2_Sensor_ID, int humidity_value, int humidity_Sensor_ID, int temperature_value, int temperature_Sensor_ID, int numberOfPassengers_value, int numberOfPassengers_Sensor_ID, Date dateAndTime) {
         this.CO2_value = CO2_value;
@@ -100,5 +113,13 @@ public class EnvironmentalValues {
 
     public Date getDateAndTime() {
         return dateAndTime;
+    }
+
+    public int getShaftPos() {
+        return shaftPos;
+    }
+
+    public void setShaftPos(int shaftPos) {
+        this.shaftPos = shaftPos;
     }
 }

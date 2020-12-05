@@ -2,8 +2,7 @@ package dwh.controllers;
 
 import dwh.adapters.EnvironmentDataAdapter;
 import dwh.adapters.EnvironmentDataAdapterImpl;
-import dwh.models.Date;
-import dwh.models.EnvironmentalValues;
+import dwh.models.*;
 import dwh.networking.WebSocketConnection;
 import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONArray;
@@ -33,12 +32,15 @@ public class EnvironmentDataController {
     private GsonBuilder builder;
     private Gson gson;
     private int shaftAction;
+    WebSocketConnection webSocketConnection;
+
 
     public EnvironmentDataController() {
 
         environmentDataAdapter = new EnvironmentDataAdapterImpl();
         builder = new GsonBuilder();
         gson = builder.create();
+        webSocketConnection=WebSocketConnection.getInstance();
 
     }
 
@@ -53,7 +55,12 @@ public class EnvironmentDataController {
 
     @GetMapping("/DataValues")
     public /*List<String>*/String getValues() {
-        String jsonString = gson.toJson(environmentDataAdapter.getLatestEnvironmentalValue());
+
+        EnvironmentalValues test =environmentDataAdapter.getLatestEnvironmentalValue();
+        test.setShaftPos(webSocketConnection.getShaftStatus());
+
+        String jsonString = gson.toJson(test);
+
         return jsonString;
     }
 
@@ -84,24 +91,28 @@ public class EnvironmentDataController {
 
     }
 
-    @GetMapping("/PostAction")
-    public ResponseEntity<String> postAction(@RequestParam boolean action) {
-        // value 0= closed 1 = open
-        // might need to decode URL encoding
-        // String decodedMsg= URLDecoder.decode(action, StandardCharsets.UTF_8);
-        // shaftAction=gson.fromJson(decodedMsg,Integer.class);
-        // no decoding needed  shaftAction = gson.fromJson(action, Integer.class);
-        if(action) {
+    @PostMapping("/PostAction")
+    public ResponseEntity<String> postAction(@RequestBody boolean action) {
+        //  From ANDROID action = true means open action=false means closed
+        // value 14= closed 28 = open to send TO IOT
+        System.out.println("Action : "+action);
+        if(action==true) {
+            System.out.println("Send value 1");
             environmentDataAdapter.setAction(1);
+            shaftAction=28;
+            webSocketConnection.sendDownLink(1);
             HttpHeaders headers = new HttpHeaders();
             headers.add("PostAction", "success");
-
             return new ResponseEntity<>(headers, HttpStatus.OK);
         }
 
-        else if(!action)
+        else if(action==false)
         {
+            System.out.println("Send value 0");
             environmentDataAdapter.setAction(0);
+            shaftAction=0;
+            webSocketConnection.sendDownLink(0);
+
             HttpHeaders headers = new HttpHeaders();
             headers.add("PostAction", "success");
 
@@ -113,10 +124,10 @@ public class EnvironmentDataController {
 
         return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
     }
-    @PostMapping("/GetAction")
+    @GetMapping("/GetAction")
     public String getAction() {
 
-        return "" + environmentDataAdapter.getAction();
+        return "" + shaftAction;//+ environmentDataAdapter.getAction();
 
     }
 }

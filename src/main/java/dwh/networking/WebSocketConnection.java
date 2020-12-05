@@ -9,7 +9,11 @@ import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
@@ -25,11 +29,13 @@ public class WebSocketConnection implements WebSocket.Listener {
     private  EnvironmentDataAdapter environmentDataAdapter;
     private WebSocket server = null;
     private static WebSocketConnection instance;
+    private int shaftStatus=0;
 
-    private WebSocketConnection()
+    public WebSocketConnection()
     {
         this.latch = new CountDownLatch(1);
         this.environmentDataAdapter = new EnvironmentDataAdapterImpl();
+
 
         HttpClient client = HttpClient.newHttpClient();
         CompletableFuture<WebSocket> ws = client.newWebSocketBuilder()
@@ -51,21 +57,33 @@ public class WebSocketConnection implements WebSocket.Listener {
         System.out.println("Open connection");
         webSocket.request(1);
     }
-
     public void sendDownLink(int value)
     {
-        JSONObject jsonTelegram = new JSONObject();
-        String tomaDevice = "0004A30B00259F36";
-        String eduardDevice = "0004A30B00251192";
-
-        jsonTelegram.put("cmd", "tx");
-        jsonTelegram.put("EUI", tomaDevice);
-        jsonTelegram.put("port", 2);
-        jsonTelegram.put("confirmed", false);
-        jsonTelegram.put("data", String.valueOf(value));
-        jsonTelegram.put("appid", "BE7A133A");
-
-        server.sendText(jsonTelegram.toString(), true);
+//        String tomaDevice = "0004A30B00259F36";
+//        String eduardDevice = "0004A30B00251192";
+        String JsonTel="";
+        if (value==1){
+             JsonTel="{\n" +
+                    "    \"cmd\": \"tx\",\n" +
+                    "    \"EUI\": \"0004A30B00259F36\",\n" +
+                    "    \"port\": 2,\n" +
+                    "    \"confirmed\": false,\n" +
+                    "    \"data\": \"28\",\n" +
+                    "    \"appid\": \"BE7A133A\"\n" +
+                    "}";
+        }
+        else if ( value ==0)
+        {
+            JsonTel="{\n" +
+                "    \"cmd\": \"tx\",\n" +
+                "    \"EUI\": \"0004A30B00259F36\",\n" +
+                "    \"port\": 2,\n" +
+                "    \"confirmed\": false,\n" +
+                "    \"data\": \"14\",\n" +
+                "    \"appid\": \"BE7A133A\"\n" +
+                "}";
+        }
+        server.sendText(JsonTel,true);
     }
 
     public void onError(WebSocket webSocket, Throwable error) {
@@ -119,26 +137,6 @@ public class WebSocketConnection implements WebSocket.Listener {
         return null;
     }
 
-//    /**
-//     * Mathias
-//     * Converts the received Hex data to a String
-//     *
-//     * @return dataObject containing humidity, Temperature & Co2
-//     */
-//
-//
-//    public Data convertFromHexToString(String Received) {
-//     //   System.out.println("Starting convert: \n" + Received);
-//        String[] parts = Received.split("\"");
-//        String data = parts[7];
-//        int temperature = Integer.parseInt(data.substring(0, 4), 16) / 10;
-//        int humidity = Integer.parseInt(data.substring(4, 8), 16) / 10;
-//        int co2 = Integer.parseInt(data.substring(8, 12), 16) / 10;
-//        Data dataCollection = new Data(temperature, humidity, co2);
-//       // System.out.println("Data Received From Loriot: " + dataCollection);
-//
-//        return dataCollection;
-//    }
 
     private void handleData(String jsonTelegram) {
 //        parse the telegram from String to JSONObject
@@ -177,11 +175,18 @@ public class WebSocketConnection implements WebSocket.Listener {
         int temperature = Integer.parseInt(dataAsHex.substring(0, 4), 16) / 10;
         int humidity = Integer.parseInt(dataAsHex.substring(4, 8), 16) / 10;
         int co2 = Integer.parseInt(dataAsHex.substring(8, 12), 16) / 10;
+        shaftStatus=Integer.parseInt(dataAsHex.substring(12), 16);
         Data dataCollection = new Data(temperature, humidity, co2);
-        System.out.println("Data Received From Loriot: " + dataCollection);
+        System.out.println("Data Received From Loriot: " + dataCollection );
+        System.out.println("Shaft status "+ shaftStatus);
 
         // sending data to the database
-       environmentDataAdapter.addEnvironmentalValuesToDB(new EnvironmentalValues(co2,1,humidity,1,temperature,1,0,0,new Date()));
+      environmentDataAdapter.addEnvironmentalValuesToDB(new EnvironmentalValues(co2,1,humidity,1,temperature,1,0,0,new Date()));
+
+    }
+
+    public int getShaftStatus() {
+         return shaftStatus;
 
     }
 }
