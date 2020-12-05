@@ -2,8 +2,7 @@ package dwh.controllers;
 
 import dwh.adapters.EnvironmentDataAdapter;
 import dwh.adapters.EnvironmentDataAdapterImpl;
-import dwh.models.Date;
-import dwh.models.EnvironmentalValues;
+import dwh.models.*;
 import dwh.networking.WebSocketConnection;
 import org.apache.tomcat.util.json.JSONParser;
 import org.json.JSONArray;
@@ -33,6 +32,7 @@ public class EnvironmentDataController {
     private GsonBuilder builder;
     private Gson gson;
     private int shaftAction;
+
 
     public EnvironmentDataController() {
 
@@ -85,32 +85,34 @@ public class EnvironmentDataController {
     }
 
     @GetMapping("/PostAction")
-    public ResponseEntity<String> postAction(@RequestParam String action) {
-        // value 0= closed 1 = open
+    public ResponseEntity<String> postAction(@RequestParam boolean action) {
+        //  From ANDROID action = true means open action=false means closed
+        // value 14= closed 28 = open to send TO IOT
         // might need to decode URL encoding
-        String decodedMsg= URLDecoder.decode(action, StandardCharsets.UTF_8);
-        shaftAction=gson.fromJson(decodedMsg,Integer.class);
+       // String decodedMsg= URLDecoder.decode(action, StandardCharsets.UTF_8);
+       // shaftAction=gson.fromJson(decodedMsg,Integer.class);
        // no decoding needed  shaftAction = gson.fromJson(action, Integer.class);
-        if (shaftAction == 0 || shaftAction == 1) {
-                environmentDataAdapter.setAction(shaftAction);
-            environmentDataAdapter.setAction(shaftAction);
+        WebSocketConnection webSocketConnection = WebSocketConnection.getInstance();
+        if(action=true) {
+            environmentDataAdapter.setAction(1);
+            shaftAction=28;
+            webSocketConnection.sendDownLink(28);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("PostAction", "success");
 
-            WebSocketConnection webSocketConnection = WebSocketConnection.getInstance();
+            return new ResponseEntity<>(headers, HttpStatus.OK);
+        }
 
-            if(shaftAction == 0)
-            {
-                webSocketConnection.sendDownLink(14);
-            }
-            else if(shaftAction == 1)
-            {
-                webSocketConnection.sendDownLink(28);
-            }
+        else if(action=false)
+        {
+            environmentDataAdapter.setAction(0);
+            shaftAction=0;
+            webSocketConnection.sendDownLink(14);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("PostAction", "success");
 
             return new ResponseEntity<>(headers, HttpStatus.OK);
-
         }
         // return bad request if values are outside of acceptable range
         HttpHeaders headers = new HttpHeaders();

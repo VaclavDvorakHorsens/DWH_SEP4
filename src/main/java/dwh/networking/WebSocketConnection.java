@@ -9,7 +9,11 @@ import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.w3c.dom.events.Event;
+import org.w3c.dom.events.EventListener;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
@@ -51,7 +55,6 @@ public class WebSocketConnection implements WebSocket.Listener {
         System.out.println("Open connection");
         webSocket.request(1);
     }
-
     public void sendDownLink(int value)
     {
         JSONObject jsonTelegram = new JSONObject();

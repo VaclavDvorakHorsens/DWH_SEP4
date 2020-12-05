@@ -159,12 +159,15 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
     @Override
     public int getAction() {
 
-        dbConnectionManager.openConnectionToDWHDatabase();
-        String sqlGet ="SELECT TOP 1 shaftCurrent FROM source_Action_Device_Log" ;
+        dbConnectionManager.openConnectionToSourceDatabase();
+        String sqlGet ="SELECT TOP 1  Device_ID,Action_ID,dateAndTime FROM source_Action_Device_Log" ;
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlGet);
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
         dbConnectionManager.closeConnectionToDatabase();
-        int shaftCurrentPos = (int) read.get(0)[0];
+        int device = (int) read.get(0)[0];
+        int shaftCurrentPos = (int) read.get(0)[1];
+        Date testDate= (Date)read.get(0)[2];
+        System.out.println("device " + device + " Shaft " + shaftCurrentPos + "Date " + testDate);
         return shaftCurrentPos;
     }
 }
