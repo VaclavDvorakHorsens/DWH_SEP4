@@ -29,6 +29,7 @@ public class WebSocketConnection implements WebSocket.Listener {
     private  EnvironmentDataAdapter environmentDataAdapter;
     private WebSocket server = null;
     private static WebSocketConnection instance;
+    private int shaftStatus=0;
 
     public WebSocketConnection()
     {
@@ -174,13 +175,18 @@ public class WebSocketConnection implements WebSocket.Listener {
         int temperature = Integer.parseInt(dataAsHex.substring(0, 4), 16) / 10;
         int humidity = Integer.parseInt(dataAsHex.substring(4, 8), 16) / 10;
         int co2 = Integer.parseInt(dataAsHex.substring(8, 12), 16) / 10;
-        int shaftStatus=Integer.parseInt(dataAsHex.substring(12), 16);
+        shaftStatus=Integer.parseInt(dataAsHex.substring(12), 16);
         Data dataCollection = new Data(temperature, humidity, co2);
         System.out.println("Data Received From Loriot: " + dataCollection );
         System.out.println("Shaft status "+ shaftStatus);
 
         // sending data to the database
       environmentDataAdapter.addEnvironmentalValuesToDB(new EnvironmentalValues(co2,1,humidity,1,temperature,1,0,0,new Date()));
+
+    }
+
+    public int getShaftStatus() {
+         return shaftStatus;
 
     }
 }
