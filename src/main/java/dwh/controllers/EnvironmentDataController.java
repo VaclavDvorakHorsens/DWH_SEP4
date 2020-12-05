@@ -88,26 +88,22 @@ public class EnvironmentDataController {
     public ResponseEntity<String> postAction(@RequestParam boolean action) {
         //  From ANDROID action = true means open action=false means closed
         // value 14= closed 28 = open to send TO IOT
-        // might need to decode URL encoding
-       // String decodedMsg= URLDecoder.decode(action, StandardCharsets.UTF_8);
-       // shaftAction=gson.fromJson(decodedMsg,Integer.class);
-       // no decoding needed  shaftAction = gson.fromJson(action, Integer.class);
         WebSocketConnection webSocketConnection = WebSocketConnection.getInstance();
-        if(action=true) {
+        if(action==true) {
+          //  System.out.println("Send value 1");
             environmentDataAdapter.setAction(1);
             shaftAction=28;
-            webSocketConnection.sendDownLink(28);
+            webSocketConnection.sendDownLink(1);
             HttpHeaders headers = new HttpHeaders();
             headers.add("PostAction", "success");
-
             return new ResponseEntity<>(headers, HttpStatus.OK);
         }
 
-        else if(action=false)
+        else if(action==false)
         {
             environmentDataAdapter.setAction(0);
             shaftAction=0;
-            webSocketConnection.sendDownLink(14);
+            webSocketConnection.sendDownLink(0);
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("PostAction", "success");
