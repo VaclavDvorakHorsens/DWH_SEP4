@@ -2,10 +2,10 @@
 					
 					
 /*drop database if already exists*/					
-/*DROP DATABASE if exists CopenhagenMetro;*/					
+DROP DATABASE if exists CopenhagenMetro;
 					
 /*create source database*/					
-/*CREATE DATABASE CopenhagenMetro;*/					
+CREATE DATABASE CopenhagenMetro;
 					
 					
 					

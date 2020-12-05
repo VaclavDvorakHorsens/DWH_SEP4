@@ -85,32 +85,27 @@ public class EnvironmentDataController {
     }
 
     @GetMapping("/PostAction")
-    public ResponseEntity<String> postAction(@RequestParam String action) {
+    public ResponseEntity<String> postAction(@RequestParam boolean action) {
         // value 0= closed 1 = open
         // might need to decode URL encoding
-        String decodedMsg= URLDecoder.decode(action, StandardCharsets.UTF_8);
-        shaftAction=gson.fromJson(decodedMsg,Integer.class);
-       // no decoding needed  shaftAction = gson.fromJson(action, Integer.class);
-        if (shaftAction == 0 || shaftAction == 1) {
-                environmentDataAdapter.setAction(shaftAction);
-            environmentDataAdapter.setAction(shaftAction);
-
-            WebSocketConnection webSocketConnection = WebSocketConnection.getInstance();
-
-            if(shaftAction == 0)
-            {
-                webSocketConnection.sendDownLink(14);
-            }
-            else if(shaftAction == 1)
-            {
-                webSocketConnection.sendDownLink(28);
-            }
-
+        // String decodedMsg= URLDecoder.decode(action, StandardCharsets.UTF_8);
+        // shaftAction=gson.fromJson(decodedMsg,Integer.class);
+        // no decoding needed  shaftAction = gson.fromJson(action, Integer.class);
+        if(action) {
+            environmentDataAdapter.setAction(1);
             HttpHeaders headers = new HttpHeaders();
             headers.add("PostAction", "success");
 
             return new ResponseEntity<>(headers, HttpStatus.OK);
+        }
 
+        else if(!action)
+        {
+            environmentDataAdapter.setAction(0);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("PostAction", "success");
+
+            return new ResponseEntity<>(headers, HttpStatus.OK);
         }
         // return bad request if values are outside of acceptable range
         HttpHeaders headers = new HttpHeaders();

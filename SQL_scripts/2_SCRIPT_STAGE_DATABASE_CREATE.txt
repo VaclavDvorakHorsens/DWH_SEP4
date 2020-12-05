@@ -1,9 +1,9 @@
 /*THIS SCRIPT CREATES STAGE DATABASE*/
 
-/*
+
 /*THIS SHOULD BE USED ON TEST ENVIRONMENT ONLY*/
 DROP DATABASE if exists CopenhagenMetro_stage;
-CREATE DATABASE CopenhagenMetro_stage;*/
+CREATE DATABASE CopenhagenMetro_stage;
 
 use CopenhagenMetro_stage;
 /*Create stage table for MetroStation*/

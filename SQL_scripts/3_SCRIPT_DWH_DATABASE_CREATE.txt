@@ -1,10 +1,10 @@
 /*THIS SCRIPT CREATES DWH DATABASE*/
 
 
-/*THIS SHOULD BE CALLED ON TEST ENVIRONMENT ONLY
+/*THIS SHOULD BE CALLED ON TEST ENVIRONMENT ONLY*/
 DROP DATABASE if exists CopenhagenMetro_DWH;
 /*create source database*/
-CREATE DATABASE CopenhagenMetro_DWH;*/
+CREATE DATABASE CopenhagenMetro_DWH;
 
 use CopenhagenMetro_DWH;
 
