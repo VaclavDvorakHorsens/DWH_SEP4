@@ -1,91 +1,91 @@
-//THIS IS A JOB THAT RUNS ONCE A DAY BEFORE MIDNIGHT		
-//THIS IS AN INCREMENTAL LOAD FOR METROSTATION DIMENSION ONLY. IT IS ACTUALLY OUT OF SEP4 SCOPE SINCE SEP4 CONSIDERES ONLY ONE STATIC METROSTATION		
-//BUT DWH TEAM DECIDED TO PREPARE FOR THEORETICAL SCENARIO, WHEN THE SYSTEM WOULD SPREAD TO OTHER STATIONS		
-		
-		
-		
-/*1.delete from stage table*/		
-/*clean stage MetroStation table*/		
-delete from CopenhagenMetro_stage.dbo.stage_dim_MetroStation		
-		
-		
-		
-/*2.add new item into stage dimension table*/		
-insert into CopenhagenMetro_stage.dbo.stage_dim_MetroStation		
-(MetroStation_ID, name,ValidFrom,ValidTo)		
-/*find added rows*/		
-select MetroStation_ID, name,(SELECT DATEADD (day, +1 ,(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update))), '12/31/9999'  from [CopenhagenMetro].[dbo].[source_MetroStation]		
-where MetroStation_ID in 		
-((		
-select MetroStation_ID from [CopenhagenMetro].[dbo].[source_MetroStation]		
-)		
-except		
-(		
-select MetroStation_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation		
-))		
-		
-		
-		
-/*3.delete from dim table*/		
-update CopenhagenMetro_DWH.dbo.dim_MetroStation set ValidTo=(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update)/*last update*/		
-where MetroStation_ID in 		
-((		
-select MetroStation_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation  where ValidTo>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update)		
-)		
-except		
-(		
-select MetroStation_ID from  [CopenhagenMetro].[dbo].[source_MetroStation]		
-))		
-		
-		
-/*4.insert new item into dim table*/		
-insert into CopenhagenMetro_DWH.dbo.dim_MetroStation(		
-[MetroStation_ID],[Name],[ValidFrom],[ValidTo])		
-select 		
-[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[MetroStation_ID],		
-[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[name],		
-[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[ValidFrom],		
-[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[ValidTo] from		
-[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation] where ValidFrom>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);		
-		
-		
-/*5.insert updated items into stage table*/		
-Insert into CopenhagenMetro_stage.dbo.stage_dim_MetroStation		
-(MetroStation_ID, Name)		
-(		
-select MetroStation_ID,		
-CASE WHEN		
-Name COLLATE DATABASE_DEFAULT is null 		
-THEN 'NO VALUE'		
-ELSE Name		
-END		
-as Name		
-from [CopenhagenMetro].[dbo].[source_MetroStation]		
-except		
-(		
-select MetroStation_ID,Name COLLATE DATABASE_DEFAULT as Name		
-from CopenhagenMetro_DWH.dbo.dim_MetroStation where ValidTo>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update)		
-)		
-except 		
-(		
-select MetroStation_ID,Name COLLATE DATABASE_DEFAULT from [CopenhagenMetro].[dbo].[source_MetroStation]		
-where MetroStation_ID NOT IN (select MetroStation_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation)		
-));		
-		
-		
-/*6.clean data in stage*/		
-update CopenhagenMetro_stage.dbo.stage_dim_MetroStation set Name='NO VALUE' where Name is Null;		
-		
-		
-/*7.update dim table with changed item*/		
-update CopenhagenMetro_DWH.dbo.dim_MetroStation set ValidTo=(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update) where		
-MetroStation_ID in (select MetroStation_ID from CopenhagenMetro_stage.dbo.stage_dim_MetroStation)		
-		
-		
-/*8.insert updated item into dim table*/		
-insert into CopenhagenMetro_DWH.dbo.dim_MetroStation (MetroStation_ID, Name, ValidFrom,ValidTo)		
-select MetroStation_ID, Name,(select LastUpdate+1 from CopenhagenMetro_DWH.dbo.dim_Update),'12/31/9999' from CopenhagenMetro_stage.dbo.stage_dim_MetroStation		
-		
-		
-/*9.set new last update date*/		
-update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT GETDATE())		
+//THIS IS A JOB THAT RUNS ONCE A DAY BEFORE MIDNIGHT
+//THIS IS AN INCREMENTAL LOAD FOR METROSTATION DIMENSION ONLY. IT IS ACTUALLY OUT OF SEP4 SCOPE SINCE SEP4 CONSIDERES ONLY ONE STATIC METROSTATION
+//BUT DWH TEAM DECIDED TO PREPARE FOR THEORETICAL SCENARIO, WHEN THE SYSTEM WOULD SPREAD TO OTHER STATIONS
+
+
+
+/*1.delete from stage table*/
+/*clean stage MetroStation table*/
+delete from CopenhagenMetro_stage.dbo.stage_dim_MetroStation
+delete from CopenhagenMetro_stage.dbo.stage_change_dim_MetroStation
+
+
+/*2.add new item into stage dimension table*/
+insert into CopenhagenMetro_stage.dbo.stage_dim_MetroStation
+(MetroStation_ID, name,ValidFrom,ValidTo)
+/*find added rows*/
+select MetroStation_ID, name,(SELECT DATEADD (day, +1 ,(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update))), '12/31/9999'  from [CopenhagenMetro].[dbo].[source_MetroStation]
+where MetroStation_ID in
+((
+select MetroStation_ID from [CopenhagenMetro].[dbo].[source_MetroStation]
+)
+except
+(
+select MetroStation_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation
+))
+
+
+
+/*3.delete from dim table*/
+update CopenhagenMetro_DWH.dbo.dim_MetroStation set ValidTo=(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update)/*last update*/
+where MetroStation_ID in
+((
+select MetroStation_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation  where ValidTo>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update)
+)
+except
+(
+select MetroStation_ID from  [CopenhagenMetro].[dbo].[source_MetroStation]
+))
+
+
+/*4.insert new item into dim table*/
+insert into CopenhagenMetro_DWH.dbo.dim_MetroStation(
+[MetroStation_ID],[Name],[ValidFrom],[ValidTo])
+select
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[MetroStation_ID],
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[name],
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[ValidFrom],
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation].[ValidTo] from
+[CopenhagenMetro_stage].[dbo].[stage_dim_MetroStation] where ValidFrom>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
+
+
+/*5.insert updated items into change stage table*/
+Insert into CopenhagenMetro_stage.dbo.stage_change_dim_MetroStation
+(MetroStation_ID, Name)
+(
+select MetroStation_ID,
+CASE WHEN
+Name COLLATE DATABASE_DEFAULT is null
+THEN 'NO VALUE'
+ELSE Name
+END
+as Name
+from [CopenhagenMetro].[dbo].[source_MetroStation]
+except
+(
+select MetroStation_ID,Name COLLATE DATABASE_DEFAULT as Name
+from CopenhagenMetro_DWH.dbo.dim_MetroStation where ValidTo>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update)
+)
+except
+(
+select MetroStation_ID,Name COLLATE DATABASE_DEFAULT from [CopenhagenMetro].[dbo].[source_MetroStation]
+where MetroStation_ID NOT IN (select MetroStation_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation)
+));
+
+
+/*6.clean data in temporary stage*/
+update CopenhagenMetro_stage.dbo.stage_change_dim_MetroStation set Name='NO VALUE' where Name is Null;
+
+
+/*7.update dim table with changed item*/
+update CopenhagenMetro_DWH.dbo.dim_MetroStation set ValidTo=(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update) where
+MetroStation_ID in (select MetroStation_ID from CopenhagenMetro_stage.dbo.stage_change_dim_MetroStation)
+
+
+/*8.insert updated item into dim table*/
+insert into CopenhagenMetro_DWH.dbo.dim_MetroStation (MetroStation_ID, Name, ValidFrom,ValidTo)
+select MetroStation_ID, Name,(select LastUpdate+1 from CopenhagenMetro_DWH.dbo.dim_Update),'12/31/9999' from CopenhagenMetro_stage.dbo.stage_change_dim_MetroStation
+
+
+/*9.set new last update date*/
+update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT GETDATE())
