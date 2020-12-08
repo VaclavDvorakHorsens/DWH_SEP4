@@ -23,7 +23,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
     /*  CONNECT TO THE SOURCE DATABASE */
     @Override
     public void addEnvironmentalValuesToDB(EnvironmentalValues environmentalValues) {
-        if(!(environmentalValues.getCO2_value() <= 0 || environmentalValues.getHumidity_value() <= 0 || environmentalValues.getTemperature_value() <= 0))
+        if(!(environmentalValues.getCO2_value() <= 0 || environmentalValues.getHumidity_value() <= 0))
         {
             dbConnectionManager.openConnectionToSourceDatabase();
 

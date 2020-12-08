@@ -31,7 +31,7 @@ public class WebSocketConnection implements WebSocket.Listener {
     private static WebSocketConnection instance;
     private int shaftStatus=0;
 
-    public WebSocketConnection()
+    private WebSocketConnection()
     {
         this.latch = new CountDownLatch(1);
         this.environmentDataAdapter = new EnvironmentDataAdapterImpl();
@@ -119,17 +119,8 @@ public class WebSocketConnection implements WebSocket.Listener {
         String indented = data.toString();
         handleData(indented);
 
-            System.out.println(indented);
-         //   String a = data.toString();
-            return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
-       // }
-
-
-        /*  Still needs to be constructed into environmentalValues object*/
-
-        //    environmentDataAdapter.addEnvironmentalValuesToDB(a);
-
-
+        System.out.println(indented);
+        return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     }
 
     public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {

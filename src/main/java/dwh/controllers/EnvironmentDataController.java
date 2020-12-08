@@ -54,12 +54,12 @@ public class EnvironmentDataController {
     }
 
     @GetMapping("/DataValues")
-    public /*List<String>*/String getValues() {
+    public String getValues() {
 
-        EnvironmentalValues test =environmentDataAdapter.getLatestEnvironmentalValue();
-        test.setShaftPos(webSocketConnection.getShaftStatus());
+        EnvironmentalValues latest =environmentDataAdapter.getLatestEnvironmentalValue();
+        latest.setShaftPos(webSocketConnection.getShaftStatus());
 
-        String jsonString = gson.toJson(test);
+        String jsonString = gson.toJson(latest);
 
         return jsonString;
     }
