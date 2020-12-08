@@ -1,7 +1,9 @@
 //THIS IS A SCRIPT FOR DELETING DATA FROM DATABASES, ONLY FOR TESTING PURPOSES!!!!!!!!!!!
-
 use copenhagenmetro
+
 delete from source_EnvironmentValues
+delete from source_Action_Device_Log
+
 
 
 use copenhagenmetro_dwh
@@ -9,14 +11,12 @@ delete from f_CO2_EnvironmentValue
 delete from f_Humidity_EnvironmentValue
 delete from f_Passenger_EnvironmentValue
 delete from f_Temperature_EnvironmentValue
+delete from f_Action_Device_Log
 
 use copenhagenmetro_stage
-delete from stage_temp_f_CO2_EnvironmentValue
-delete from stage_temp_f_Humidity_EnvironmentValue
-delete from stage_temp_f_Passenger_EnvironmentValue
-delete from stage_temp_f_Temperature_EnvironmentValue
 delete from stage_f_CO2_EnvironmentValue
 delete from stage_f_Humidity_EnvironmentValue
 delete from stage_f_Passenger_EnvironmentValue
 delete from stage_f_Temperature_EnvironmentValue
+delete from stage_f_Action_Device_Log
 

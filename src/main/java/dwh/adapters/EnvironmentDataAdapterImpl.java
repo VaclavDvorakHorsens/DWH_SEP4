@@ -43,7 +43,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
                 preparedStatement.setString(8, String.valueOf(3));
                 preparedStatement.setString(9, String.valueOf(new Timestamp(System.currentTimeMillis())));
 
-                dbConnectionManager.addToDatabase(preparedStatement);
+               /* dbConnectionManager.addToDatabase(preparedStatement);*/
 
             } catch (SQLException e) {
                 e.printStackTrace();

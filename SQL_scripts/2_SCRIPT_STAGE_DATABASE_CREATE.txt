@@ -1,10 +1,13 @@
 /*THIS SCRIPT CREATES STAGE DATABASE*/
 
-/*
-/*THIS SHOULD BE USED ON TEST ENVIRONMENT ONLY*/
-DROP DATABASE if exists CopenhagenMetro_stage;
-CREATE DATABASE CopenhagenMetro_stage;*/
 
+/*DROP SHOULD BE USED ON TEST ENVIRONMENT ONLY*/
+/*DROP DATABASE if exists CopenhagenMetro_stage;*/
+
+/*create source database first*/
+CREATE DATABASE CopenhagenMetro_stage;
+
+/*then run the rest below*/
 use CopenhagenMetro_stage;
 /*Create stage table for MetroStation*/
 Create table stage_dim_MetroStation
@@ -12,11 +15,16 @@ Create table stage_dim_MetroStation
 MetroStation_ID int,
 Name varchar(255),
 ValidFrom DATE,
-ValidTo DATE,
-PRIMARY KEY (MetroStation_ID)
+ValidTo DATE
 );
 
 
+/*Create temporary stage table for MetroStation for slow changes*/
+Create table stage_change_dim_MetroStation
+(
+MetroStation_ID int,
+Name varchar(255)
+);
 
 
 
@@ -26,8 +34,16 @@ Create table stage_dim_Action
 Action_ID int,
 Name varchar(255),
 ValidFrom DATE,
-ValidTo DATE,
-PRIMARY KEY (Action_ID)
+ValidTo DATE
+);
+
+
+
+/*Create stage table for Action*/
+Create table stage_change_dim_Action
+(
+Action_ID int,
+Name varchar(255)
 );
 
 
@@ -38,8 +54,7 @@ PRIMARY KEY (Action_ID)
 Create table stage_dim_Sensor
 (
 Sensor_ID int,
-Name varchar(255),
-PRIMARY KEY (Sensor_ID)
+Name varchar(255)
 );
 
 
@@ -47,8 +62,7 @@ PRIMARY KEY (Sensor_ID)
 Create table stage_dim_Device
 (
 Device_ID int,
-Name varchar(255),
-PRIMARY KEY (Device_ID)
+Name varchar(255)
 );
 
 /*Create stage fact table for CO2 environmental values*/
