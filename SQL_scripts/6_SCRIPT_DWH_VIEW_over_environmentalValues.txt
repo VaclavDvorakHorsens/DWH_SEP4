@@ -1,36 +1,39 @@
 /*this is a DWH view for Android to get latest environmental values. it shows only the latest value*/
 
+/*run the use command first*/
+use CopenhagenMetro_DWH;
 
-CREATE OR ALTER VIEW f_EnvironmentalValues_View AS SELECT TOP 1					
+/*then run the rest*/
+CREATE OR ALTER VIEW f_EnvironmentalValues_View AS SELECT TOP 1
 m.MetroStation_ID as MetroStation_ID,
-m.name as MetroStation_name,					
-concat (da.CalendarDate,' ', 					
+m.name as MetroStation_name,
+concat (da.CalendarDate,' ',
 (select right('0' + CONVERT(VARCHAR(2),t.Hour), 2))
-,':', (select right('0' + CONVERT(VARCHAR(2),t.Minute), 2)),':','00')					
-as DateTime ,					
-sCO2.Sensor_ID as CO2_sensor,					
-dbo.f_CO2_EnvironmentValue.co2_value as CO2_value,			
-sTmp.Sensor_ID as Temp_sensor,					
-dbo.f_Temperature_EnvironmentValue.Temp_Value as Temp_value,					
-sHu.Sensor_ID as Humidity_sensor,					
-dbo.f_Humidity_EnvironmentValue.Humidity_Value as Humidity_value,					
-sPsg.Sensor_ID as Passangers_sensor,					
-dbo.f_Passenger_EnvironmentValue.Passenger_Value as Passangers_value					
-FROM dbo.f_CO2_EnvironmentValue					
+,':', (select right('0' + CONVERT(VARCHAR(2),t.Minute), 2)),':','00')
+as DateTime ,
+sCO2.Sensor_ID as CO2_sensor,
+dbo.f_CO2_EnvironmentValue.co2_value as CO2_value,
+sTmp.Sensor_ID as Temp_sensor,
+dbo.f_Temperature_EnvironmentValue.Temp_Value as Temp_value,
+sHu.Sensor_ID as Humidity_sensor,
+dbo.f_Humidity_EnvironmentValue.Humidity_Value as Humidity_value,
+sPsg.Sensor_ID as Passangers_sensor,
+dbo.f_Passenger_EnvironmentValue.Passenger_Value as Passangers_value
+FROM dbo.f_CO2_EnvironmentValue
 JOIN dbo.f_Temperature_EnvironmentValue ON dbo.f_Temperature_EnvironmentValue.Date_ID = dbo.f_CO2_EnvironmentValue.Date_ID AND
-dbo.f_Temperature_EnvironmentValue.T_ID = dbo.f_CO2_EnvironmentValue.T_ID					
+dbo.f_Temperature_EnvironmentValue.T_ID = dbo.f_CO2_EnvironmentValue.T_ID
 JOIN dbo.f_Humidity_EnvironmentValue ON dbo.f_Humidity_EnvironmentValue.Date_ID = dbo.f_CO2_EnvironmentValue.Date_ID AND
-dbo.f_Humidity_EnvironmentValue.T_ID = dbo.f_CO2_EnvironmentValue.T_ID					
+dbo.f_Humidity_EnvironmentValue.T_ID = dbo.f_CO2_EnvironmentValue.T_ID
 JOIN dbo.f_Passenger_EnvironmentValue ON dbo.f_Passenger_EnvironmentValue.Date_ID = dbo.f_CO2_EnvironmentValue.Date_ID AND
-dbo.f_Passenger_EnvironmentValue.T_ID = dbo.f_CO2_EnvironmentValue.T_ID					
-JOIN CopenhagenMetro_DWH.dbo.dim_MetroStation m on m.M_ID=CopenhagenMetro_DWH.dbo.f_CO2_EnvironmentValue.M_ID				
-JOIN CopenhagenMetro_DWH.dbo.dim_Time t on t.T_ID=dbo.f_Temperature_EnvironmentValue.T_ID					
+dbo.f_Passenger_EnvironmentValue.T_ID = dbo.f_CO2_EnvironmentValue.T_ID
+JOIN CopenhagenMetro_DWH.dbo.dim_MetroStation m on m.M_ID=CopenhagenMetro_DWH.dbo.f_CO2_EnvironmentValue.M_ID
+JOIN CopenhagenMetro_DWH.dbo.dim_Time t on t.T_ID=dbo.f_Temperature_EnvironmentValue.T_ID
 JOIN CopenhagenMetro_DWH.dbo.dim_Date da on da.Date_ID=dbo.f_Temperature_EnvironmentValue.Date_ID
 JOIN CopenhagenMetro_DWH.dbo.dim_Sensor sCO2 on sCO2.S_ID=dbo.f_CO2_EnvironmentValue.S_ID
 JOIN CopenhagenMetro_DWH.dbo.dim_Sensor sHu on sHu.S_ID=dbo.f_Humidity_EnvironmentValue.S_ID
 JOIN CopenhagenMetro_DWH.dbo.dim_Sensor sTmp on sTmp.S_ID=dbo.f_Temperature_EnvironmentValue.S_ID
 JOIN CopenhagenMetro_DWH.dbo.dim_Sensor sPsg on sPsg.S_ID=dbo.f_Passenger_EnvironmentValue.S_ID
-order by (concat (da.CalendarDate,' ', 					
+order by (concat (da.CalendarDate,' ',
 (select right('0' + CONVERT(VARCHAR(2),t.Hour), 2))
 ,':', (select right('0' + CONVERT(VARCHAR(2),t.Minute), 2)),':','00')) DESC
 
@@ -38,7 +41,7 @@ order by (concat (da.CalendarDate,' ',
 
 
 /*this is just a possible update in case that view should show more data, for example one day back*/
-/*where (concat (da.CalendarDate,' ', 					
+/*where (concat (da.CalendarDate,' ',
 (select right('0' + CONVERT(VARCHAR(2),t.Hour), 2))
 ,':', (select right('0' + CONVERT(VARCHAR(2),t.Minute), 2)),':','00'))>(SELECT GETDATE()-1)
 */
