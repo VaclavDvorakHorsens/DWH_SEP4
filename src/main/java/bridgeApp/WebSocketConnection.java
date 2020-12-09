@@ -1,19 +1,10 @@
-package dwh.networking;
+package bridgeApp;
 
-import dwh.adapters.EnvironmentDataAdapter;
-import dwh.adapters.EnvironmentDataAdapterImpl;
-import dwh.models.Data;
 import dwh.models.EnvironmentalValues;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.w3c.dom.events.Event;
-import org.w3c.dom.events.EventListener;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.WebSocket;
@@ -165,12 +156,12 @@ public class WebSocketConnection implements WebSocket.Listener {
         int humidity = Integer.parseInt(dataAsHex.substring(4, 8), 16) / 10;
         int co2 = Integer.parseInt(dataAsHex.substring(8, 12), 16) / 10;
         shaftStatus=Integer.parseInt(dataAsHex.substring(12), 16);
-        Data dataCollection = new Data(temperature, humidity, co2);
+        EnvironmentalValues dataCollection = new EnvironmentalValues(co2,1,humidity,1,temperature,1,0,0, new Date());
         System.out.println("Data Received From Loriot: " + dataCollection );
         System.out.println("Shaft status "+ shaftStatus);
 
         // sending data to the database
-      environmentDataAdapter.addEnvironmentalValuesToDB(new EnvironmentalValues(co2,1,humidity,1,temperature,1,0,0,new Date()));
+      environmentDataAdapter.addEnvironmentalValuesToDB(dataCollection);
 
     }
 

@@ -1,10 +1,8 @@
 package dwh.adapters;
 
-import dwh.dbconnection.DbConnectionManager;
+import bridgeApp.dbconnection.DbConnectionManager;
 import dwh.models.ActionLog;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -15,7 +13,7 @@ public class ActionLogDataAdapterImpl implements ActionLogDataAdapter {
     public ActionLogDataAdapterImpl() {
         dbConnectionManager = new DbConnectionManager();
     }
-
+//TODO split into source and dwh
     @Override
     public void addActionLogToDB(ActionLog actionLog) {
 

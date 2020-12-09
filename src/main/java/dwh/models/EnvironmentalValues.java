@@ -122,4 +122,20 @@ public class EnvironmentalValues {
     public void setShaftPos(int shaftPos) {
         this.shaftPos = shaftPos;
     }
+
+    @Override
+    public String toString() {
+        return "EnvironmentalValues{" +
+                "CO2_value=" + CO2_value +
+                ", CO2_Sensor_ID=" + CO2_Sensor_ID +
+                ", humidity_value=" + humidity_value +
+                ", humidity_Sensor_ID=" + humidity_Sensor_ID +
+                ", temperature_value=" + temperature_value +
+                ", temperature_Sensor_ID=" + temperature_Sensor_ID +
+                ", numberOfPassengers_value=" + numberOfPassengers_value +
+                ", numberOfPassengers_Sensor_ID=" + numberOfPassengers_Sensor_ID +
+                ", dateAndTime=" + dateAndTime +
+                ", shaftPos=" + shaftPos +
+                '}';
+    }
 }

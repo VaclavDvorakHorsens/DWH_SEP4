@@ -1,4 +1,4 @@
-package dwh.dbconnection;
+package bridgeApp.dbconnection;
 
 import java.sql.*;
 import java.util.ArrayList;

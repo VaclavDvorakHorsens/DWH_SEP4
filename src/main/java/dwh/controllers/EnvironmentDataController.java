@@ -1,14 +1,9 @@
 package dwh.controllers;
 
-import dwh.adapters.EnvironmentDataAdapter;
-import dwh.adapters.EnvironmentDataAdapterImpl;
+import dwh.adapters.DWHEnviomentDataAdapterImpl;
+import dwh.adapters.DWHEnviromentDataAdapter;
 import dwh.models.*;
-import dwh.networking.WebSocketConnection;
-import org.apache.tomcat.util.json.JSONParser;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONException;
-import org.json.JSONTokener;
+import bridgeApp.WebSocketConnection;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,7 +19,7 @@ import com.google.gson.GsonBuilder;
 @RestController
 public class EnvironmentDataController {
 
-    private final EnvironmentDataAdapter environmentDataAdapter;
+    private final DWHEnviromentDataAdapter environmentDataAdapter;
     private GsonBuilder builder;
     private Gson gson;
     private int shaftAction;
@@ -37,7 +28,7 @@ public class EnvironmentDataController {
 
     public EnvironmentDataController() {
 
-        environmentDataAdapter = new EnvironmentDataAdapterImpl();
+        environmentDataAdapter = new DWHEnviomentDataAdapterImpl();
         builder = new GsonBuilder();
         gson = builder.create();
         webSocketConnection=WebSocketConnection.getInstance();
