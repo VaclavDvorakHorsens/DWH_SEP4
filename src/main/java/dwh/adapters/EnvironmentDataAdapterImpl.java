@@ -178,7 +178,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
     @Override
     public Forecast getForecast(dwh.models.Date date) {
 
-        dbConnectionManager.openConnectionToDWHDatabase();
+   //     dbConnectionManager.openConnectionToDWHDatabase();
 
         String query = "";
         try {
@@ -187,12 +187,15 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
             e.printStackTrace();
         }
 
-        query.replaceAll(":myDate", date.toString());
+       String replace = query.replaceAll(":myDate", date.toString());
 
-        PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(query);
+        System.out.println(replace);
+
+        PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(replace);
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
-        int avgCO2_7to9 = (int) read.get(0)[0];
+
+       int avgCO2_7to9 = (int) read.get(0)[0];
         int avgCO2_11to13 = (int) read.get(0)[1];
         int avgCO2_15to17 = (int) read.get(0)[2];
         int avgCO2_19to21 = (int) read.get(0)[3];
@@ -214,6 +217,6 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
 
         dbConnectionManager.closeConnectionToDatabase();
 
-        return forecast;
+        return null;
     }
 }
