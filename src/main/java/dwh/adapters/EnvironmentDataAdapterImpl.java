@@ -189,8 +189,6 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
 
        String replace = query.replaceAll(":myDate", date.toString());
 
-        System.out.println(replace);
-
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(replace);
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
