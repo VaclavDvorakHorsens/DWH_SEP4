@@ -11,5 +11,5 @@ public interface DWHEnviromentDataAdapter {
     List<EnvironmentalValues> getEnvironmentalValuesFromDatabaseGivenDate(java.sql.Date beginDate, Date endDate);
     void setAction(int action);
     int getAction();
-    Forecast getForecast(dwh.models.Date date);
+    Forecast getForecast(Date date);
 }

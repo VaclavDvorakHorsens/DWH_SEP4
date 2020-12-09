@@ -140,7 +140,7 @@ public class DWHEnviomentDataAdapterImpl implements DWHEnviromentDataAdapter {
     }
 
     @Override
-    public Forecast getForecast(dwh.models.Date date) {
+    public Forecast getForecast(Date date) {
 
         dbConnectionManager.openConnectionToDWHDatabase();
 
