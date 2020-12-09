@@ -123,9 +123,10 @@ public class EnvironmentDataController {
     }
 
     @GetMapping("/GetForecast")
-    public String getForecast(@RequestBody dwh.models.Date date)
+    public String getForecast(@RequestParam String date)
     {
-        Forecast forecast = environmentDataAdapter.getForecast(date);
+        String split[] = date.split("-");
+        Forecast forecast = environmentDataAdapter.getForecast(new Date(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])));
         String jsonString = gson.toJson(forecast);
 
         return jsonString;
