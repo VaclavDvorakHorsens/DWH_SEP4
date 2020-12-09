@@ -20,12 +20,5 @@ public class MainStart {
         WebSocketConnection webSocketConnection = WebSocketConnection.getInstance();
        // webSocketConnection.sendDownLink(14);
         SpringApplication.run(MainStart.class, args);
-
-       Date date = new Date();
-
-        EnvironmentDataAdapter adapter = new EnvironmentDataAdapterImpl();
-
-
-
     }
 }

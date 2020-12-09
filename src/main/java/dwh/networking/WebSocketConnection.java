@@ -36,10 +36,10 @@ public class WebSocketConnection implements WebSocket.Listener {
         this.latch = new CountDownLatch(1);
         this.environmentDataAdapter = new EnvironmentDataAdapterImpl();
 
-
         HttpClient client = HttpClient.newHttpClient();
         CompletableFuture<WebSocket> ws = client.newWebSocketBuilder()
-                .buildAsync(URI.create("wss://iotnet.cibicom.dk/app?token=vnoTOgAAABFpb3RuZXQuY2liaWNvbS5ka2z21adiqWKYdLsgxiOUnKc="), this);
+                .buildAsync(URI.create("wss://iotnet.cibicom.dk/app?token=vnoTOgAAABFpb3RuZXQuY2liaWNvbS5ka2z21adiqWKYdLsgxiOUnKc="),
+                        this);
         server = ws.join();
     }
 
@@ -59,8 +59,6 @@ public class WebSocketConnection implements WebSocket.Listener {
     }
     public void sendDownLink(int value)
     {
-//        String tomaDevice = "0004A30B00259F36";
-//        String eduardDevice = "0004A30B00251192";
         String JsonTel="";
         if (value==1){
              JsonTel="{\n" +

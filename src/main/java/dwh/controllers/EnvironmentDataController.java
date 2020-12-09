@@ -54,12 +54,12 @@ public class EnvironmentDataController {
     }
 
     @GetMapping("/DataValues")
-    public String getValues() {
+    public /*List<String>*/String getValues() {
 
-        EnvironmentalValues latest =environmentDataAdapter.getLatestEnvironmentalValue();
-        latest.setShaftPos(webSocketConnection.getShaftStatus());
+        EnvironmentalValues test =environmentDataAdapter.getLatestEnvironmentalValue();
+        test.setShaftPos(shaftAction);
 
-        String jsonString = gson.toJson(latest);
+        String jsonString = gson.toJson(test);
 
         return jsonString;
     }
@@ -99,7 +99,7 @@ public class EnvironmentDataController {
         if(action==true) {
             System.out.println("Send value 1");
             environmentDataAdapter.setAction(1);
-            shaftAction=28;
+            shaftAction=1;
             webSocketConnection.sendDownLink(1);
             HttpHeaders headers = new HttpHeaders();
             headers.add("PostAction", "success");
@@ -125,9 +125,9 @@ public class EnvironmentDataController {
         return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
     }
     @GetMapping("/GetAction")
-    public String getAction() {
+    public int getAction() {
 
-        return "" + shaftAction;//+ environmentDataAdapter.getAction();
+        return webSocketConnection.getShaftStatus();//+ environmentDataAdapter.getAction();
 
     }
 }
