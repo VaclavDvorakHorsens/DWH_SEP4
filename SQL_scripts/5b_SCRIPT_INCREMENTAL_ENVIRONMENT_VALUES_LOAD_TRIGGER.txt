@@ -33,7 +33,7 @@ join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.CO2_Sensor_ID
 join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID
 join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID
 where e.dateAndTime between ms.DateFrom and ms.DateTo AND
-Format(e.dateAndTime,'yyyy-MM-dd HH:mm')>(select Format(CopenhagenMetro_DWH.dbo.dim_Update.LastUpdate,'yyyy-MM-dd HH:mm') from CopenhagenMetro_DWH.dbo.dim_Update);
+e.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
 
  update CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue
   set M_ID=(Select M_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation m where m.MetroStation_ID=stage_f_CO2_EnvironmentValue.MetroStation_ID AND m.ValidTo='9999-12-31');
@@ -54,7 +54,7 @@ join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.numberOfPassen
 join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID
 join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID
 where e.dateAndTime between ms.DateFrom and ms.DateTo AND
-Format(e.dateAndTime,'yyyy-MM-dd HH:mm')>(select Format(CopenhagenMetro_DWH.dbo.dim_Update.LastUpdate,'yyyy-MM-dd HH:mm') from CopenhagenMetro_DWH.dbo.dim_Update);
+e.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
 /*Update surrogate keys*/
  update CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue
   set M_ID=(Select M_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation m where m.MetroStation_ID=stage_f_Passenger_EnvironmentValue.MetroStation_ID AND m.ValidTo='9999-12-31');
@@ -75,7 +75,7 @@ join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.temperature_Se
 join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID
 join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID
 where e.dateAndTime between ms.DateFrom and ms.DateTo AND
-Format(e.dateAndTime,'yyyy-MM-dd HH:mm')>(select Format(CopenhagenMetro_DWH.dbo.dim_Update.LastUpdate,'yyyy-MM-dd HH:mm') from CopenhagenMetro_DWH.dbo.dim_Update);
+e.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
 
 /*Update surrogate keys*/
  update CopenhagenMetro_stage.dbo.stage_f_Temperature_EnvironmentValue
@@ -98,7 +98,7 @@ join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.Humidity_Senso
 join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID
 join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID
 where e.dateAndTime between ms.DateFrom and ms.DateTo AND
-Format(e.dateAndTime,'yyyy-MM-dd HH:mm')>(select Format(CopenhagenMetro_DWH.dbo.dim_Update.LastUpdate,'yyyy-MM-dd HH:mm') from CopenhagenMetro_DWH.dbo.dim_Update);
+e.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
 
 /*Update surrogate keys*/
  update CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue
