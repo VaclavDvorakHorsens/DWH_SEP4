@@ -2,7 +2,11 @@ package dwh.adapters;
 
 import dwh.dbconnection.DbConnectionManager;
 import dwh.models.EnvironmentalValues;
+import dwh.models.Forecast;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -169,5 +173,47 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
         Date testDate= (Date)read.get(0)[2];
         System.out.println("device " + device + " Shaft " + shaftCurrentPos + "Date " + testDate);
         return shaftCurrentPos;
+    }
+
+    @Override
+    public Forecast getForecast(dwh.models.Date date) {
+
+        dbConnectionManager.openConnectionToDWHDatabase();
+
+        String query = "";
+        try {
+            query = new String(Files.readAllBytes(Paths.get("SQL_scripts/8_SCRIPT_FORECAST_VALUES.txt")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        query.replaceAll(":myDate", date.toString());
+
+        PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(query);
+
+        ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
+        int avgCO2_7to9 = (int) read.get(0)[0];
+        int avgCO2_11to13 = (int) read.get(0)[1];
+        int avgCO2_15to17 = (int) read.get(0)[2];
+        int avgCO2_19to21 = (int) read.get(0)[3];
+
+        int avgHumidity_7to9 = (int) read.get(0)[4];
+        int avgHumidity_11to13 = (int) read.get(0)[5];
+        int avgHumidity_15to17 = (int) read.get(0)[6];
+        int avgHumidity_19to21 = (int) read.get(0)[7];
+
+        int avgTemperature_7to9 = (int) read.get(0)[4];
+        int avgTemperature_11to13 = (int) read.get(0)[5];
+        int avgTemperature_15to17 = (int) read.get(0)[6];
+        int avgTemperature_19to21 = (int) read.get(0)[7];
+
+        Forecast forecast = new Forecast();
+        forecast.setCO2Forecast(avgCO2_7to9, avgCO2_11to13, avgCO2_15to17, avgCO2_19to21);
+        forecast.setHumidityForecast(avgHumidity_7to9, avgHumidity_11to13, avgHumidity_15to17, avgHumidity_19to21);
+        forecast.setTemperatureForecast(avgTemperature_7to9, avgTemperature_11to13, avgTemperature_15to17, avgTemperature_19to21);
+
+        dbConnectionManager.closeConnectionToDatabase();
+
+        return forecast;
     }
 }

@@ -130,5 +130,14 @@ public class EnvironmentDataController {
         return webSocketConnection.getShaftStatus();//+ environmentDataAdapter.getAction();
 
     }
+
+    @GetMapping("/GetForecast")
+    public String getForecast(@RequestBody dwh.models.Date date)
+    {
+        Forecast forecast = environmentDataAdapter.getForecast(date);
+        String jsonString = gson.toJson(forecast);
+
+        return jsonString;
+    }
 }
 
