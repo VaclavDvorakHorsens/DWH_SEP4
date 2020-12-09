@@ -24,9 +24,7 @@ public class MainStart {
        Date date = new Date();
 
         EnvironmentDataAdapter adapter = new EnvironmentDataAdapterImpl();
-        adapter.addEnvironmentalValuesToDB(new EnvironmentalValues(new EnvironmentalValues(25, 1,
-                30, 2, 20, 3, 6,
-                0, new Date())));
+
 
 
     }
