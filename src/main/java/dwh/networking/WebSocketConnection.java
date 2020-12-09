@@ -31,15 +31,15 @@ public class WebSocketConnection implements WebSocket.Listener {
     private static WebSocketConnection instance;
     private int shaftStatus=0;
 
-    public WebSocketConnection()
+    private WebSocketConnection()
     {
         this.latch = new CountDownLatch(1);
         this.environmentDataAdapter = new EnvironmentDataAdapterImpl();
 
-
         HttpClient client = HttpClient.newHttpClient();
         CompletableFuture<WebSocket> ws = client.newWebSocketBuilder()
-                .buildAsync(URI.create("wss://iotnet.cibicom.dk/app?token=vnoTOgAAABFpb3RuZXQuY2liaWNvbS5ka2z21adiqWKYdLsgxiOUnKc="), this);
+                .buildAsync(URI.create("wss://iotnet.cibicom.dk/app?token=vnoTOgAAABFpb3RuZXQuY2liaWNvbS5ka2z21adiqWKYdLsgxiOUnKc="),
+                        this);
         server = ws.join();
     }
 
@@ -59,8 +59,6 @@ public class WebSocketConnection implements WebSocket.Listener {
     }
     public void sendDownLink(int value)
     {
-//        String tomaDevice = "0004A30B00259F36";
-//        String eduardDevice = "0004A30B00251192";
         String JsonTel="";
         if (value==1){
              JsonTel="{\n" +
@@ -119,17 +117,8 @@ public class WebSocketConnection implements WebSocket.Listener {
         String indented = data.toString();
         handleData(indented);
 
-            System.out.println(indented);
-         //   String a = data.toString();
-            return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
-       // }
-
-
-        /*  Still needs to be constructed into environmentalValues object*/
-
-        //    environmentDataAdapter.addEnvironmentalValuesToDB(a);
-
-
+        System.out.println(indented);
+        return new CompletableFuture().completedFuture("onText() completed.").thenAccept(System.out::println);
     }
 
     public CompletionStage<?> onBinary(WebSocket webSocket, ByteBuffer data, boolean last) {

@@ -23,7 +23,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
     /*  CONNECT TO THE SOURCE DATABASE */
     @Override
     public void addEnvironmentalValuesToDB(EnvironmentalValues environmentalValues) {
-        if(!(environmentalValues.getCO2_value() <= 0 || environmentalValues.getHumidity_value() <= 0 || environmentalValues.getTemperature_value() <= 0))
+        if(!(environmentalValues.getCO2_value() <= 0 || environmentalValues.getHumidity_value() <= 0))
         {
             dbConnectionManager.openConnectionToSourceDatabase();
 
@@ -34,16 +34,16 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
             PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlInsert);
             try {
                 preparedStatement.setString(1, String.valueOf(environmentalValues.getCO2_value()));
-                preparedStatement.setString(2, String.valueOf(1));
+                preparedStatement.setString(2, String.valueOf(2));
                 preparedStatement.setString(3, String.valueOf(environmentalValues.getHumidity_value()));
-                preparedStatement.setString(4, String.valueOf(2));
+                preparedStatement.setString(4, String.valueOf(1));
                 preparedStatement.setString(5, String.valueOf(environmentalValues.getTemperature_value()));
-                preparedStatement.setString(6, String.valueOf(3));
+                preparedStatement.setString(6, String.valueOf(1));
                 preparedStatement.setString(7, String.valueOf(environmentalValues.getNumberOfPassengers_value()));
-                preparedStatement.setString(8, String.valueOf(4));
+                preparedStatement.setString(8, String.valueOf(3));
                 preparedStatement.setString(9, String.valueOf(new Timestamp(System.currentTimeMillis())));
 
-                dbConnectionManager.addToDatabase(preparedStatement);
+               /* dbConnectionManager.addToDatabase(preparedStatement);*/
 
             } catch (SQLException e) {
                 e.printStackTrace();
