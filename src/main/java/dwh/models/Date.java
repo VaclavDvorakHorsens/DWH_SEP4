@@ -70,6 +70,11 @@ public class Date {
             return false;
     }
 
+    public String toString()
+    {
+        return year + "-" + month + "-" + day;
+    }
+
 
 
 
