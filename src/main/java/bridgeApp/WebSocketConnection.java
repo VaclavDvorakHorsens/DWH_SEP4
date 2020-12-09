@@ -17,26 +17,26 @@ import java.util.concurrent.CountDownLatch;
 public class WebSocketConnection implements WebSocket.Listener {
 
     private final CountDownLatch latch;
-    private  EnvironmentDataAdapter environmentDataAdapter;
-    private WebSocket server = null;
+    private EnvironmentDataAdapter environmentDataAdapter;
+    private WebSocket server;
+    private HttpClient client;
+    private CompletableFuture<WebSocket> ws;
     private static WebSocketConnection instance;
-    private int shaftStatus=0;
+    private int shaftStatus = 0;
 
-    private WebSocketConnection()
-    {
+    private WebSocketConnection() {
         this.latch = new CountDownLatch(1);
         this.environmentDataAdapter = new EnvironmentDataAdapterImpl();
 
-        HttpClient client = HttpClient.newHttpClient();
-        CompletableFuture<WebSocket> ws = client.newWebSocketBuilder()
+        client = HttpClient.newHttpClient();
+        ws = client.newWebSocketBuilder()
                 .buildAsync(URI.create("wss://iotnet.cibicom.dk/app?token=vnoTOgAAABFpb3RuZXQuY2liaWNvbS5ka2z21adiqWKYdLsgxiOUnKc="),
                         this);
         server = ws.join();
     }
 
     public static WebSocketConnection getInstance() {
-        if(instance == null)
-        {
+        if (instance == null) {
             instance = new WebSocketConnection();
         }
 
@@ -48,11 +48,11 @@ public class WebSocketConnection implements WebSocket.Listener {
         System.out.println("Open connection");
         webSocket.request(1);
     }
-    public void sendDownLink(int value)
-    {
-        String JsonTel="";
-        if (value==1){
-             JsonTel="{\n" +
+
+    public void sendDownLink(int value) {
+        String JsonTel = "";
+        if (value == 1) {
+            JsonTel = "{\n" +
                     "    \"cmd\": \"tx\",\n" +
                     "    \"EUI\": \"0004A30B00259F36\",\n" +
                     "    \"port\": 2,\n" +
@@ -60,27 +60,29 @@ public class WebSocketConnection implements WebSocket.Listener {
                     "    \"data\": \"28\",\n" +
                     "    \"appid\": \"BE7A133A\"\n" +
                     "}";
+        } else if (value == 0) {
+            JsonTel = "{\n" +
+                    "    \"cmd\": \"tx\",\n" +
+                    "    \"EUI\": \"0004A30B00259F36\",\n" +
+                    "    \"port\": 2,\n" +
+                    "    \"confirmed\": false,\n" +
+                    "    \"data\": \"14\",\n" +
+                    "    \"appid\": \"BE7A133A\"\n" +
+                    "}";
         }
-        else if ( value ==0)
-        {
-            JsonTel="{\n" +
-                "    \"cmd\": \"tx\",\n" +
-                "    \"EUI\": \"0004A30B00259F36\",\n" +
-                "    \"port\": 2,\n" +
-                "    \"confirmed\": false,\n" +
-                "    \"data\": \"14\",\n" +
-                "    \"appid\": \"BE7A133A\"\n" +
-                "}";
-        }
-        server.sendText(JsonTel,true);
+        server.sendText(JsonTel, true);
     }
 
     public void onError(WebSocket webSocket, Throwable error) {
-       // System.out.println("A " + error.getCause() + " exception was thrown.");
         System.out.println(error.getMessage());
         error.printStackTrace();
-        //System.out.println("Message: " + error.getLocalizedMessage());
         webSocket.abort();
+
+        client = HttpClient.newHttpClient();
+        ws = client.newWebSocketBuilder()
+                .buildAsync(URI.create("wss://iotnet.cibicom.dk/app?token=vnoTOgAAABFpb3RuZXQuY2liaWNvbS5ka2z21adiqWKYdLsgxiOUnKc="),
+                        this);
+        server = ws.join();
     }
 
     public CompletionStage<?> onClose(WebSocket webSocket, int statusCode, String reason) {
@@ -117,15 +119,13 @@ public class WebSocketConnection implements WebSocket.Listener {
         return null;
     }
 
-
     private void handleData(String jsonTelegram) {
-//        parse the telegram from String to JSONObject
+        // parse the telegram from String to JSONObject
         var parser = new JSONParser();
-        JSONObject json = null;
+        JSONObject json;
         try {
-           json = (JSONObject) parser.parse(jsonTelegram);
+            json = (JSONObject) parser.parse(jsonTelegram);
         } catch (ParseException e) {
-            //   LOGGER.severe(e.toString());
             System.out.println("Something went wrong!");
             return;
         }
@@ -135,38 +135,35 @@ public class WebSocketConnection implements WebSocket.Listener {
             return;
         }
 
-            if (!json.get("cmd").equals("rx")) return;
+        if (!json.get("cmd").equals("rx")) return;
 
-//        extract data raw
-        String dataAsHex = null;
+        // extract data raw
+        String dataAsHex;
 
-            dataAsHex = (String) json.get("data");
+        dataAsHex = (String) json.get("data");
 
-//        check id data field is null
+        // check if data field is null
         if (dataAsHex == null) {
             System.out.println("data field in telegram is null");
             return;
         }
 
-//        spit data string every 4 characters and store it in an array
-        //String[] measurementsAsHex = dataAsHex.split("(?<=\\G....)");
-
-//        extract sensor data from the array
+        // parse sensor data
         int temperature = Integer.parseInt(dataAsHex.substring(0, 4), 16) / 10;
         int humidity = Integer.parseInt(dataAsHex.substring(4, 8), 16) / 10;
         int co2 = Integer.parseInt(dataAsHex.substring(8, 12), 16) / 10;
-        shaftStatus=Integer.parseInt(dataAsHex.substring(12), 16);
-        EnvironmentalValues dataCollection = new EnvironmentalValues(co2,1,humidity,1,temperature,1,0,0, new Date());
-        System.out.println("Data Received From Loriot: " + dataCollection );
-        System.out.println("Shaft status "+ shaftStatus);
+        shaftStatus = Integer.parseInt(dataAsHex.substring(12), 16);
+        EnvironmentalValues dataCollection = new EnvironmentalValues(
+                co2, 1, humidity, 1, temperature,
+                1, 0, 0, new Date());
+        System.out.println("Data Received From Loriot: " + dataCollection);
+        System.out.println("Shaft status " + shaftStatus);
 
         // sending data to the database
-      environmentDataAdapter.addEnvironmentalValuesToDB(dataCollection);
-
+        environmentDataAdapter.addEnvironmentalValuesToDB(dataCollection);
     }
 
     public int getShaftStatus() {
-         return shaftStatus;
-
+        return shaftStatus;
     }
 }
