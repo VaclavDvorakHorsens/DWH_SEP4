@@ -178,7 +178,7 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
     @Override
     public Forecast getForecast(dwh.models.Date date) {
 
-   //     dbConnectionManager.openConnectionToDWHDatabase();
+        dbConnectionManager.openConnectionToDWHDatabase();
 
         String query = "";
         try {
