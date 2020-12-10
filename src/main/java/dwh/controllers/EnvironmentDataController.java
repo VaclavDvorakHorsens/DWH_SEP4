@@ -126,10 +126,13 @@ public class EnvironmentDataController {
     public String getForecast(@RequestParam String date)
     {
         String split[] = date.split("-");
-        Forecast forecast = environmentDataAdapter.getForecast(new Date(Integer.parseInt(split[0]), Integer.parseInt(split[1]), Integer.parseInt(split[2])));
+        Forecast forecast = environmentDataAdapter.getForecast(new Date(Integer.parseInt(split[2]), Integer.parseInt(split[1]), Integer.parseInt(split[0])));
         String jsonString = gson.toJson(forecast);
 
         return jsonString;
     }
+
+
+
 }
 

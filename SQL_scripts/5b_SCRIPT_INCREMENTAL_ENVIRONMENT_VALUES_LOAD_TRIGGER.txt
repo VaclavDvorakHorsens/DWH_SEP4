@@ -25,48 +25,48 @@ delete from CopenhagenMetro_stage.dbo.stage_f_Temperature_EnvironmentValue
 
 
 /*INCREMENTAL LOAD, stage fact tables*/
-/*CO2*/
-insert into CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue([MetroStation_ID],[Sensor_ID],[CO2_value],[dateAndTime])
-select m.[MetroStation_ID], s.[Sensor_ID], e.[CO2_value], e.[dateAndTime] from
-[CopenhagenMetro].[dbo].[source_EnvironmentValues] e
-join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.CO2_Sensor_ID
-join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID
-join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID
-where e.dateAndTime between ms.DateFrom and ms.DateTo AND
+/*CO2*/			
+insert into CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue([MetroStation_ID],[Sensor_ID],[CO2_value],[dateAndTime])			
+select m.[MetroStation_ID], s.[Sensor_ID], e.[CO2_value], e.[dateAndTime] from			
+[CopenhagenMetro].[dbo].[source_EnvironmentValues] e			
+join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.CO2_Sensor_ID			
+join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID			
+join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID			
+where e.dateAndTime between ms.DateFrom and ms.DateTo AND 
 e.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
+			
+ update CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue			
+  set M_ID=(Select M_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation m where m.MetroStation_ID=stage_f_CO2_EnvironmentValue.MetroStation_ID AND m.ValidTo='9999-12-31');	
+  update CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue			
+  set S_ID=(Select S_ID from CopenhagenMetro_DWH.dbo.dim_Sensor s where s.Sensor_ID=stage_f_CO2_EnvironmentValue.Sensor_ID);			
+ update CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue			
+ set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate = 			
+TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue.dateAndTime));			
+ update CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue			
+ set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour= 			
+ (Format(dateAndTime ,'%H')) AND t.Minute=(Format(dateAndTime, 'mm')));	
 
- update CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue
-  set M_ID=(Select M_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation m where m.MetroStation_ID=stage_f_CO2_EnvironmentValue.MetroStation_ID AND m.ValidTo='9999-12-31');
-  update CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue
-  set S_ID=(Select S_ID from CopenhagenMetro_DWH.dbo.dim_Sensor s where s.Sensor_ID=stage_f_CO2_EnvironmentValue.Sensor_ID);
- update CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue
- set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate =
-TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue.dateAndTime));
- update CopenhagenMetro_stage.dbo.stage_f_CO2_EnvironmentValue
- set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour=
- (Format(dateAndTime ,'%H')) AND t.Minute=(Format(dateAndTime, 'mm')));
-
-/*Passangers*/
-insert into CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue([MetroStation_ID],[Sensor_ID],[Passenger_value],[dateAndTime])
-select m.[MetroStation_ID], s.[Sensor_ID], e.[numberOfPassengers_value], e.[dateAndTime] from
-[CopenhagenMetro].[dbo].[source_EnvironmentValues] e
-join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.numberOfPassengers_Sensor_ID
-join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID
-join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID
-where e.dateAndTime between ms.DateFrom and ms.DateTo AND
+/*Passangers*/	
+insert into CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue([MetroStation_ID],[Sensor_ID],[Passenger_value],[dateAndTime])	
+select m.[MetroStation_ID], s.[Sensor_ID], e.[numberOfPassengers_value], e.[dateAndTime] from	
+[CopenhagenMetro].[dbo].[source_EnvironmentValues] e	
+join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.numberOfPassengers_Sensor_ID	
+join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID	
+join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID	
+where e.dateAndTime between ms.DateFrom and ms.DateTo AND  
 e.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
-/*Update surrogate keys*/
- update CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue
-  set M_ID=(Select M_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation m where m.MetroStation_ID=stage_f_Passenger_EnvironmentValue.MetroStation_ID AND m.ValidTo='9999-12-31');
-  update CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue
-  set S_ID=(Select S_ID from CopenhagenMetro_DWH.dbo.dim_Sensor s where s.Sensor_ID=stage_f_Passenger_EnvironmentValue.Sensor_ID);
- update CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue
- set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate =
-TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue.dateAndTime));
- update CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue
- set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour=
- (Format(dateAndTime ,'%H')) AND t.Minute=(Format(dateAndTime, 'mm')));
-
+/*Update surrogate keys*/	
+ update CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue	
+  set M_ID=(Select M_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation m where m.MetroStation_ID=stage_f_Passenger_EnvironmentValue.MetroStation_ID AND m.ValidTo='9999-12-31');	
+  update CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue	
+  set S_ID=(Select S_ID from CopenhagenMetro_DWH.dbo.dim_Sensor s where s.Sensor_ID=stage_f_Passenger_EnvironmentValue.Sensor_ID);	
+ update CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue	
+ set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate = 	
+TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue.dateAndTime));	
+ update CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue	
+ set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour= 	
+ (Format(dateAndTime ,'%H')) AND t.Minute=(Format(dateAndTime, 'mm')));	
+		
 /*Temperature*/
 insert into CopenhagenMetro_stage.dbo.stage_f_Temperature_EnvironmentValue([MetroStation_ID],[Sensor_ID],[Temp_value],[dateAndTime])
 select m.[MetroStation_ID], s.[Sensor_ID], e.[Temperature_value], e.[dateAndTime] from
@@ -74,7 +74,7 @@ select m.[MetroStation_ID], s.[Sensor_ID], e.[Temperature_value], e.[dateAndTime
 join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.temperature_Sensor_ID
 join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID
 join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID
-where e.dateAndTime between ms.DateFrom and ms.DateTo AND
+where e.dateAndTime between ms.DateFrom and ms.DateTo AND 
 e.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
 
 /*Update surrogate keys*/
@@ -83,34 +83,34 @@ e.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
   update CopenhagenMetro_stage.dbo.stage_f_Temperature_EnvironmentValue
   set S_ID=(Select S_ID from CopenhagenMetro_DWH.dbo.dim_Sensor s where s.Sensor_ID=stage_f_Temperature_EnvironmentValue.Sensor_ID);
    update CopenhagenMetro_stage.dbo.stage_f_Temperature_EnvironmentValue
- set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate =
+ set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate = 
 TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Temperature_EnvironmentValue.dateAndTime));
  update CopenhagenMetro_stage.dbo.stage_f_Temperature_EnvironmentValue
- set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour=
+ set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour= 
  (Format(dateAndTime ,'%H')) AND t.Minute=(Format(dateAndTime, 'mm')));
 
 
 /*Humidity*/
-insert into CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue([MetroStation_ID],[Sensor_ID],[Humidity_value],[dateAndTime])
-select m.[MetroStation_ID], s.[Sensor_ID], e.[Humidity_value], e.[dateAndTime] from
-[CopenhagenMetro].[dbo].[source_EnvironmentValues] e
-join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.Humidity_Sensor_ID
-join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID
-join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID
+insert into CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue([MetroStation_ID],[Sensor_ID],[Humidity_value],[dateAndTime])	
+select m.[MetroStation_ID], s.[Sensor_ID], e.[Humidity_value], e.[dateAndTime] from	
+[CopenhagenMetro].[dbo].[source_EnvironmentValues] e	
+join [CopenhagenMetro].[dbo].[source_Sensor] s on s.Sensor_ID = e.Humidity_Sensor_ID	
+join [CopenhagenMetro].[dbo].[source_MetroStation_Sensor] ms on ms.Sensor_ID= s.Sensor_ID	
+join [CopenhagenMetro].[dbo].[source_MetroStation] m on m.MetroStation_ID=ms.MetroStation_ID	
 where e.dateAndTime between ms.DateFrom and ms.DateTo AND
 e.dateAndTime>(select LastUpdate from CopenhagenMetro_DWH.dbo.dim_Update);
-
-/*Update surrogate keys*/
- update CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue
-  set M_ID=(Select M_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation m where m.MetroStation_ID=stage_f_Humidity_EnvironmentValue.MetroStation_ID AND m.ValidTo='9999-12-31');
-  update CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue
-  set S_ID=(Select S_ID from CopenhagenMetro_DWH.dbo.dim_Sensor s where s.Sensor_ID=stage_f_Humidity_EnvironmentValue.Sensor_ID);
-   update CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue
- set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate =
-TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue.dateAndTime));
- update CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue
- set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour=
- (Format(dateAndTime ,'%H')) AND t.Minute=(Format(dateAndTime, 'mm')));
+	
+/*Update surrogate keys*/	
+ update CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue	
+  set M_ID=(Select M_ID from CopenhagenMetro_DWH.dbo.dim_MetroStation m where m.MetroStation_ID=stage_f_Humidity_EnvironmentValue.MetroStation_ID AND m.ValidTo='9999-12-31');	
+  update CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue	
+  set S_ID=(Select S_ID from CopenhagenMetro_DWH.dbo.dim_Sensor s where s.Sensor_ID=stage_f_Humidity_EnvironmentValue.Sensor_ID);	
+   update CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue	
+ set Date_ID=(Select Date_ID from CopenhagenMetro_DWH.dbo.dim_Date da where da.CalendarDate = 	
+TRY_CONVERT(DATE, CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue.dateAndTime));	
+ update CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue	
+ set T_ID=(Select T_ID from CopenhagenMetro_DWH.dbo.dim_Time t where t.Hour= 	
+ (Format(dateAndTime ,'%H')) AND t.Minute=(Format(dateAndTime, 'mm')));	
 
 
 
@@ -135,16 +135,17 @@ from CopenhagenMetro_stage.dbo.stage_f_Humidity_EnvironmentValue;
 
 
 /*Passangers*/
-insert into CopenhagenMetro_DWH.dbo.f_Passenger_EnvironmentValue (M_ID, Date_ID,T_ID,S_ID, Passenger_value)
-select M_ID, Date_ID,T_ID,S_ID, Passenger_value
-from CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue;
+insert into CopenhagenMetro_DWH.dbo.f_Passenger_EnvironmentValue (M_ID, Date_ID,T_ID,S_ID, Passenger_value)		
+select M_ID, Date_ID,T_ID,S_ID, Passenger_value		
+from CopenhagenMetro_stage.dbo.stage_f_Passenger_EnvironmentValue;		
 
 
 
 
 /*INCREMENTAL LOAD, set last incremental load date*/
 /*after incremental load*/
-/*update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT DATEADD (hour, +1 ,GETDATE()))*/
+/*this is a version of update on google cloud, where the servers run in UTC-1 time*/ 
+/*update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT DATEADD (hour, +1 ,GETDATE()));*/
 update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT GETDATE())
 
 

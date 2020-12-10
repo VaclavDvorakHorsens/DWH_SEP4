@@ -1,55 +1,89 @@
 /*THIS SCRIPT RETURNS AVG ENVIRONMENTAL VALUES IN PREDEFINED TIME PERIODS BASED ON PROVIDED DATE*/
 Select
 /*return avg CO2 values during specific time periods*/
-(select avg(co2_value) from copenhagenmetro_dwh.dbo.f_CO2_EnvironmentValue CO2V
-join copenhagenmetro_dwh.dbo.dim_Time T	on CO2V.T_ID=T.T_ID where t.Hour= 7 OR t.Hour=8 OR t.Hour=9 AND t.Minute=0)
+(select avg(co2_value) from copenhagenmetro_dwh.dbo.f_CO2_EnvironmentValue CO2V 
+join copenhagenmetro_dwh.dbo.dim_Time T	on CO2V.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on CO2V.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 7 OR t.Hour=8 OR (t.Hour=9 AND t.Minute=0)))
 as avgCO2_7to9,
-(select avg(co2_value) from copenhagenmetro_dwh.dbo.f_CO2_EnvironmentValue CO2V
-join copenhagenmetro_dwh.dbo.dim_Time T	on CO2V.T_ID=T.T_ID where t.Hour= 11 OR t.Hour=12 OR t.Hour=13 AND t.Minute=0)
+(select avg(co2_value) from copenhagenmetro_dwh.dbo.f_CO2_EnvironmentValue CO2V 
+join copenhagenmetro_dwh.dbo.dim_Time T	on CO2V.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on CO2V.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 11 OR t.Hour=12 OR (t.Hour=13 AND t.Minute=0)))
 as avgCO2_11to13,
-(select avg(co2_value) from copenhagenmetro_dwh.dbo.f_CO2_EnvironmentValue CO2V
-join copenhagenmetro_dwh.dbo.dim_Time T	on CO2V.T_ID=T.T_ID where t.Hour= 15 OR t.Hour=16 OR t.Hour=17 AND t.Minute=0)
+(select avg(co2_value) from copenhagenmetro_dwh.dbo.f_CO2_EnvironmentValue CO2V 
+join copenhagenmetro_dwh.dbo.dim_Time T	on CO2V.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on CO2V.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 15 OR t.Hour=16 OR (t.Hour=17 AND t.Minute=0)))
 as avgCO2_15to17,
-(select avg(co2_value) from copenhagenmetro_dwh.dbo.f_CO2_EnvironmentValue CO2V
-join copenhagenmetro_dwh.dbo.dim_Time T	on CO2V.T_ID=T.T_ID where t.Hour= 19 OR t.Hour=20 OR t.Hour=21 AND t.Minute=0)
+(select avg(co2_value) from copenhagenmetro_dwh.dbo.f_CO2_EnvironmentValue CO2V 
+join copenhagenmetro_dwh.dbo.dim_Time T	on CO2V.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on CO2V.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 19 OR t.Hour=20 OR (t.Hour=21 AND t.Minute=0)))
 as avgCO2_19to21,
+
 /*return avg humidity values during specific time periods*/
-(select avg(Humidity_Value) from copenhagenmetro_dwh.dbo.f_Humidity_EnvironmentValue HUMV
-join copenhagenmetro_dwh.dbo.dim_Time T	on HUMV.T_ID=T.T_ID where t.Hour= 7 OR t.Hour=8 OR t.Hour=9 AND t.Minute=0)
+(select avg(Humidity_Value) from copenhagenmetro_dwh.dbo.f_Humidity_EnvironmentValue HUMV 
+join copenhagenmetro_dwh.dbo.dim_Time T	on HUMV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on HUMV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 7 OR t.Hour=8 OR (t.Hour=9 AND t.Minute=0)))
 as avgHumidity_7to9,
-(select avg(Humidity_Value) from copenhagenmetro_dwh.dbo.f_Humidity_EnvironmentValue HUMV
-join copenhagenmetro_dwh.dbo.dim_Time T	on HUMV.T_ID=T.T_ID where t.Hour= 11 OR t.Hour=12 OR t.Hour=13 AND t.Minute=0)
+(select avg(Humidity_Value) from copenhagenmetro_dwh.dbo.f_Humidity_EnvironmentValue HUMV 
+join copenhagenmetro_dwh.dbo.dim_Time T	on HUMV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on HUMV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 11 OR t.Hour=12 OR (t.Hour=13 AND t.Minute=0)))
 as avgHumidity_11to13,
-(select avg(Humidity_Value) from copenhagenmetro_dwh.dbo.f_Humidity_EnvironmentValue HUMV
-join copenhagenmetro_dwh.dbo.dim_Time T	on HUMV.T_ID=T.T_ID where t.Hour= 15 OR t.Hour=16 OR t.Hour=17 AND t.Minute=0)
+(select avg(Humidity_Value) from copenhagenmetro_dwh.dbo.f_Humidity_EnvironmentValue HUMV 
+join copenhagenmetro_dwh.dbo.dim_Time T	on HUMV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on HUMV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 15 OR t.Hour=16 OR (t.Hour=17 AND t.Minute=0)))
 as avgHumidity_15to17,
-(select avg(Humidity_Value) from copenhagenmetro_dwh.dbo.f_Humidity_EnvironmentValue HUMV
-join copenhagenmetro_dwh.dbo.dim_Time T	on HUMV.T_ID=T.T_ID where t.Hour= 19 OR t.Hour=20 OR t.Hour=21 AND t.Minute=0)
+(select avg(Humidity_Value) from copenhagenmetro_dwh.dbo.f_Humidity_EnvironmentValue HUMV 
+join copenhagenmetro_dwh.dbo.dim_Time T	on HUMV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on HUMV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 19 OR t.Hour=20 OR (t.Hour=21 AND t.Minute=0)))
 as avgHumidity_19to21,
+
 /*return avg temperature values during specific time periods*/
-(select avg(Temp_Value) from copenhagenmetro_dwh.dbo.f_Temperature_EnvironmentValue TEMV
-join copenhagenmetro_dwh.dbo.dim_Time T	on TEMV.T_ID=T.T_ID where t.Hour= 7 OR t.Hour=8 OR t.Hour=9 AND t.Minute=0)
+(select avg(Temp_Value) from copenhagenmetro_dwh.dbo.f_Temperature_EnvironmentValue TEMV 
+join copenhagenmetro_dwh.dbo.dim_Time T	on TEMV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on TEMV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 7 OR t.Hour=8 OR (t.Hour=9 AND t.Minute=0)))
 as avgTemperature_7to9,
-(select avg(Temp_Value) from copenhagenmetro_dwh.dbo.f_Temperature_EnvironmentValue TEMV
-join copenhagenmetro_dwh.dbo.dim_Time T	on TEMV.T_ID=T.T_ID where t.Hour= 11 OR t.Hour=12 OR t.Hour=13 AND t.Minute=0)
+(select avg(Temp_Value) from copenhagenmetro_dwh.dbo.f_Temperature_EnvironmentValue TEMV  
+join copenhagenmetro_dwh.dbo.dim_Time T	on TEMV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on TEMV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 11 OR t.Hour=12 OR (t.Hour=13 AND t.Minute=0)))
 as avgTemperature_11to13,
-(select avg(Temp_Value) from copenhagenmetro_dwh.dbo.f_Temperature_EnvironmentValue TEMV
-join copenhagenmetro_dwh.dbo.dim_Time T	on TEMV.T_ID=T.T_ID where t.Hour= 15 OR t.Hour=16 OR t.Hour=17 AND t.Minute=0)
+(select avg(Temp_Value) from copenhagenmetro_dwh.dbo.f_Temperature_EnvironmentValue TEMV 
+join copenhagenmetro_dwh.dbo.dim_Time T	on TEMV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on TEMV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 15 OR t.Hour=16 OR (t.Hour=17 AND t.Minute=0)))
 as avgTemperature_15to17,
-(select avg(Temp_Value) from copenhagenmetro_dwh.dbo.f_Temperature_EnvironmentValue TEMV
-join copenhagenmetro_dwh.dbo.dim_Time T	on TEMV.T_ID=T.T_ID where t.Hour= 19 OR t.Hour=20 OR t.Hour=21 AND t.Minute=0)
+(select avg(Temp_Value) from copenhagenmetro_dwh.dbo.f_Temperature_EnvironmentValue TEMV 
+join copenhagenmetro_dwh.dbo.dim_Time T	on TEMV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on TEMV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 19 OR t.Hour=20 OR (t.Hour=21 AND t.Minute=0)))
 as avgTemperature_19to21,
+
 /*return avg Passenger values(number of passengers) during specific time periods*/
-(select avg(Passenger_Value) from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV
-join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID where t.Hour= 7 OR t.Hour=8 OR t.Hour=9 AND t.Minute=0)
-as avgTemperature_7to9,
-(select avg(Passenger_Value) from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV
-join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID where t.Hour= 11 OR t.Hour=12 OR t.Hour=13 AND t.Minute=0)
-as avgTemperature_11to13,
-(select avg(Passenger_Value) from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV
-join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID where t.Hour= 15 OR t.Hour=16 OR t.Hour=17 AND t.Minute=0)
-as avgTemperature_15to17,
-(select avg(Passenger_Value) from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV
-join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID where t.Hour= 19 OR t.Hour=20 OR t.Hour=21 AND t.Minute=0)
-as avgTemperature_19to21
-FROM CopenhagenMetro_DWH.dbo.dim_Date where CalendarDate=':myDate'; /*in format YYYY-MM-DD */
+(select avg(Passenger_Value) from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV 
+join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on PASV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 7 OR t.Hour=8 OR (t.Hour=9 AND t.Minute=0)))
+as avgPassenger_7to9,
+(select avg(Passenger_Value) from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV 
+join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on PASV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 11 OR t.Hour=12 OR (t.Hour=13 AND t.Minute=0)))
+as avgPassenger_11to13,
+(select avg(Passenger_Value) from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV  
+join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on PASV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 15 OR t.Hour=16 OR (t.Hour=17 AND t.Minute=0)))
+as avgPassenger_15to17,
+(select avg(Passenger_Value) from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV  
+join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID
+join CopenhagenMetro_DWH.dbo.dim_Date Date on PASV.Date_ID=Date.Date_ID  
+where Date.CalendarDate=':myDate' and (t.Hour= 19 OR t.Hour=20 OR (t.Hour=21 AND t.Minute=0)))
+as avgPassenger_19to21;
