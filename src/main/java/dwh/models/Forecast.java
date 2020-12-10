@@ -89,4 +89,25 @@ public class Forecast {
         return temp;
     }
 
+    @Override
+    public String toString() {
+        return "Forecast{" +
+                "co2_8=" + co2_8 +
+                ", co2_12=" + co2_12 +
+                ", co2_16=" + co2_16 +
+                ", co2_20=" + co2_20 +
+                ", humidity_8=" + humidity_8 +
+                ", humidity_12=" + humidity_12 +
+                ", humidity_16=" + humidity_16 +
+                ", humidity_20=" + humidity_20 +
+                ", temp_8=" + temp_8 +
+                ", temp_12=" + temp_12 +
+                ", temp_16=" + temp_16 +
+                ", temp_20=" + temp_20 +
+                ", numberOfPassengers_8=" + numberOfPassengers_8 +
+                ", numberOfPassengers_12=" + numberOfPassengers_12 +
+                ", numberOfPassengers_16=" + numberOfPassengers_16 +
+                ", numberOfPassengers_20=" + numberOfPassengers_20 +
+                '}';
+    }
 }
