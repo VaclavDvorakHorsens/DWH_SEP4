@@ -150,7 +150,6 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
             e.printStackTrace();
         }
 
-
         String day = date.getDay() + "";
         String month = date.getMonth() + "";
         String year = date.getYear() + "";
@@ -165,14 +164,13 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
             month = "0" + date.getMonth();
         }
 
-
         String replace = query.replaceAll(":myDate", year+ "-" + month + "-" + day);
 
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(replace);
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
 
-        if(read.size() != 0) {
+        if(read.size() <= 0 || read.get(0)[0] != null) {
 
             int avgCO2_7to9 = (int) Math.round((Double) read.get(0)[0]);
             int avgCO2_11to13 = (int) Math.round((Double) read.get(0)[1]);
