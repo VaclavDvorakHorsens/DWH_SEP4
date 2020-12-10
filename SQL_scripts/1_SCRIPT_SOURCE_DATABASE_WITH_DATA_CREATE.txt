@@ -1,162 +1,163 @@
-/*THIS SCRIPT CREATES SOURCE DATABASE AND FILLS IT WITH DATA*/
+/*THIS SCRIPT CREATES SOURCE DATABASE AND FILLS IT WITH DATA*/					
+					
+					
+/*drop should be called on test environment only*/					
+/*DROP DATABASE if exists CopenhagenMetro;*/					
+					
+/*create source database first*/					
+CREATE DATABASE CopenhagenMetro;					
+					
+					
+					
+/*then run the rest below*/					
+/*create table where info about IoT sensors is stored*/					
+use CopenhagenMetro					
+Create table source_Sensor					
+(					
+Sensor_ID int,					
+name nvarchar(255),					
+PRIMARY KEY(Sensor_ID)					
+);					
 
-
-/*drop should be called on test environment only*/
-/*DROP DATABASE if exists CopenhagenMetro;*/
-
-/*create source database first*/
-CREATE DATABASE CopenhagenMetro;
-
-
-
-/*then run the rest below*/
-/*create table where info about IoT sensors is stored*/
-use CopenhagenMetro
-Create table source_Sensor
-(
-Sensor_ID int,
-name nvarchar(255),
-PRIMARY KEY(Sensor_ID)
-);
-
-insert into source_Sensor values (1,'Sensor_Temp_Humidity_1');
-insert into source_Sensor values (2,'Sensor_CO2_1');
-insert into source_Sensor values (3,'Sensor_NumberOfPassangers_1');
-
-
-
-
-
-
-/*create table where environmental data from IoT is stored*/
-
-
-Create table source_EnvironmentValues
-(
-ID int IDENTITY(1,1),
-CO2_value float,
-CO2_Sensor_ID int,
-humidity_value float,
-humidity_Sensor_ID int,
-temperature_value float,
-temperature_Sensor_ID int,
-numberOfPassengers_value int,
-numberOfPassengers_Sensor_ID int,
-dateAndTime DATETIME,
-
-
-FOREIGN KEY (numberOfPassengers_Sensor_ID) REFERENCES source_Sensor(Sensor_ID),
-FOREIGN KEY (humidity_Sensor_ID) REFERENCES source_Sensor(Sensor_ID),
-FOREIGN KEY (CO2_Sensor_ID) REFERENCES source_Sensor(Sensor_ID),
-FOREIGN KEY (temperature_Sensor_ID) REFERENCES source_Sensor(Sensor_ID)
-);
-/*insert dummy data for testing purposes
-insert into source_EnvironmentValues (CO2_value,CO2_Sensor_ID,humidity_value,humidity_Sensor_ID,
-	temperature_value,temperature_Sensor_ID,numberOfPassengers_value,numberOfPassengers_Sensor_ID,
-	dateAndTime) values (50.2,2,20.1,1,33.3,1,25,3,'2020-11-10 22:11:00');
-insert into source_EnvironmentValues (CO2_value,CO2_Sensor_ID,humidity_value,humidity_Sensor_ID,
-	temperature_value,temperature_Sensor_ID,numberOfPassengers_value,numberOfPassengers_Sensor_ID,
-	dateAndTime) values (50.2,2,20.1,1,33.3,1,25,3,'2020-11-09 21:10:00');
-insert into source_EnvironmentValues (CO2_value,CO2_Sensor_ID,humidity_value,humidity_Sensor_ID,
-	temperature_value,temperature_Sensor_ID,numberOfPassengers_value,numberOfPassengers_Sensor_ID,
-	dateAndTime) values (100,2,20.1,1,33.3,1,40,3,'2020-11-10 22:09:00');		*/
-
-
-
-
-
-/*create table which shows metro stations*/
-Create table source_MetroStation
-(
-MetroStation_ID int,
-name nvarchar(255),
-PRIMARY KEY(MetroStation_ID)
-);
-/*insert dummy data*/
-insert into source_MetroStation values (1,'CopenhagenStation');
-insert into source_MetroStation values (2,'DummyStationName_2');
-insert into source_MetroStation values (3,'DummyStationName_3');
-
-
-
-/*create table which shows IoT sensors and in which metro station they were/are in time*/
-Create table source_MetroStation_Sensor
-(
-Sensor_ID int,
-MetroStation_ID int,
-DateFrom DATETIME,
-DateTo DATETIME,
-PRIMARY KEY(Sensor_ID, DateFrom),
-FOREIGN KEY (Sensor_ID) REFERENCES source_Sensor(Sensor_ID),
-FOREIGN KEY (MetroStation_ID) REFERENCES source_MetroStation(MetroStation_ID)
-);
-/*insert data*/
-insert into source_MetroStation_Sensor (Sensor_ID,MetroStation_ID,DateFrom,DateTo) values (1,1,'2019-01-01','2999-12-31');
-insert into source_MetroStation_Sensor (Sensor_ID,MetroStation_ID,DateFrom,DateTo) values (2,1,'2019-01-01','2999-12-31');
-insert into source_MetroStation_Sensor (Sensor_ID,MetroStation_ID,DateFrom,DateTo) values (3,1,'2019-01-01','2999-12-31');
-
-
-
-
-
-/*create table which shows devices (shafts)*/
-Create table source_Device
-(
-Device_ID int,
-name nvarchar(255),
-PRIMARY KEY(Device_ID)
-);
-/*insert dummy data*/
-insert into source_Device values (1,'Shaft_1');
-insert into source_Device values (2,'Shaft_Dummy_2');
-
-
-
-/*create table which shows devices and in which metro station they were/are in time*/
-Create table source_MetroStation_Device
-(
-Device_ID int,
-MetroStation_ID int,
-DateFrom DATETIME,
-DateTo DATETIME,
-PRIMARY KEY(Device_ID, DateFrom),
-FOREIGN KEY (Device_ID) REFERENCES source_Device(Device_ID),
-FOREIGN KEY (MetroStation_ID) REFERENCES source_MetroStation(MetroStation_ID)
-);
-
-/*insert dummy data*/
-insert into source_MetroStation_Device (Device_ID,MetroStation_ID,DateFrom) values (1,1,'2019-01-01');
-insert into source_MetroStation_Device (Device_ID,MetroStation_ID,DateFrom) values (2,1,'2019-01-01');
-
-
-
-
-/*create table which actions that can be performed on devices (shafts)*/
-Create table source_Action
-(
-Action_ID int,
-name nvarchar(255),
-PRIMARY KEY(Action_ID)
-);
-/*insert dummy data*/
-insert into source_Action values (0,'Close');
-insert into source_Action values (1,'Open');
-
-
-
-/*create table which shows actions and their values and on which devices they were perfomed in time*/
-Create table source_Action_Device_Log
-(
-id int IDENTITY(1,1),
-Device_ID int,
-Action_ID int,
-dateAndTIme DATETIME,
-FOREIGN KEY (Device_ID) REFERENCES source_Device(Device_ID),
-FOREIGN KEY (Action_ID) REFERENCES source_Action(Action_ID)
-);
-/*insert dummy data*/
-insert into source_Action_Device_Log(Device_ID,Action_ID,dateAndTime) values (1,0,'2020-12-01 19:11:00');
-insert into source_Action_Device_Log(Device_ID,Action_ID,dateAndTime) values (1,1,'2020-12-01 20:15:00');
-insert into source_Action_Device_Log(Device_ID,Action_ID,dateAndTime) values (1,0,'2020-12-01 22:11:00');
-
+/*insert data*/					
+insert into source_Sensor values (1,'Sensor_Temp_Humidity_1');					
+insert into source_Sensor values (2,'Sensor_CO2_1');					
+insert into source_Sensor values (3,'Sensor_NumberOfPassangers_1');					
+					
+					
+					
+					
+					
+					
+/*create table where environmental data from IoT is stored*/					
+					
+					
+Create table source_EnvironmentValues					
+(					
+ID int IDENTITY(1,1),					
+CO2_value float,					
+CO2_Sensor_ID int,					
+humidity_value float,					
+humidity_Sensor_ID int,					
+temperature_value float,					
+temperature_Sensor_ID int,					
+numberOfPassengers_value int,					
+numberOfPassengers_Sensor_ID int,					
+dateAndTime DATETIME,					
+					
+					
+FOREIGN KEY (numberOfPassengers_Sensor_ID) REFERENCES source_Sensor(Sensor_ID),					
+FOREIGN KEY (humidity_Sensor_ID) REFERENCES source_Sensor(Sensor_ID),					
+FOREIGN KEY (CO2_Sensor_ID) REFERENCES source_Sensor(Sensor_ID),					
+FOREIGN KEY (temperature_Sensor_ID) REFERENCES source_Sensor(Sensor_ID)					
+);					
+/*insert dummy data for testing purposes					
+insert into source_EnvironmentValues (CO2_value,CO2_Sensor_ID,humidity_value,humidity_Sensor_ID,					
+	temperature_value,temperature_Sensor_ID,numberOfPassengers_value,numberOfPassengers_Sensor_ID,				
+	dateAndTime) values (50.2,2,20.1,1,33.3,1,25,3,'2020-11-10 22:11:00');				
+insert into source_EnvironmentValues (CO2_value,CO2_Sensor_ID,humidity_value,humidity_Sensor_ID,					
+	temperature_value,temperature_Sensor_ID,numberOfPassengers_value,numberOfPassengers_Sensor_ID,				
+	dateAndTime) values (50.2,2,20.1,1,33.3,1,25,3,'2020-11-09 21:10:00');			
+insert into source_EnvironmentValues (CO2_value,CO2_Sensor_ID,humidity_value,humidity_Sensor_ID,					
+	temperature_value,temperature_Sensor_ID,numberOfPassengers_value,numberOfPassengers_Sensor_ID,				
+	dateAndTime) values (100,2,20.1,1,33.3,1,40,3,'2020-11-10 22:09:00');		*/		
+					
+					
+					
+					
+					
+/*create table which shows metro stations*/					
+Create table source_MetroStation					
+(					
+MetroStation_ID int,					
+name nvarchar(255),					
+PRIMARY KEY(MetroStation_ID)					
+);					
+/*insert data*/					
+insert into source_MetroStation values (1,'CopenhagenStation');					
+insert into source_MetroStation values (2,'DummyStationName_2');					
+insert into source_MetroStation values (3,'DummyStationName_3');					
+					
+					
+					
+/*create table which shows IoT sensors and in which metro station they were/are in time*/					
+Create table source_MetroStation_Sensor					
+(					
+Sensor_ID int,					
+MetroStation_ID int,					
+DateFrom DATETIME,					
+DateTo DATETIME,					
+PRIMARY KEY(Sensor_ID, DateFrom),					
+FOREIGN KEY (Sensor_ID) REFERENCES source_Sensor(Sensor_ID),					
+FOREIGN KEY (MetroStation_ID) REFERENCES source_MetroStation(MetroStation_ID)					
+);					
+/*insert data*/					
+insert into source_MetroStation_Sensor (Sensor_ID,MetroStation_ID,DateFrom,DateTo) values (1,1,'2019-01-01','2999-12-31');					
+insert into source_MetroStation_Sensor (Sensor_ID,MetroStation_ID,DateFrom,DateTo) values (2,1,'2019-01-01','2999-12-31');					
+insert into source_MetroStation_Sensor (Sensor_ID,MetroStation_ID,DateFrom,DateTo) values (3,1,'2019-01-01','2999-12-31');					
+					
+					
+					
+					
+					
+/*create table which shows devices (shafts)*/					
+Create table source_Device					
+(					
+Device_ID int,					
+name nvarchar(255),					
+PRIMARY KEY(Device_ID)					
+);					
+/*insert data*/					
+insert into source_Device values (1,'Shaft_1');					
+insert into source_Device values (2,'Shaft_Dummy_2');					
+					
+					
+					
+/*create table which shows devices and in which metro station they were/are in time*/					
+Create table source_MetroStation_Device					
+(					
+Device_ID int,					
+MetroStation_ID int,					
+DateFrom DATETIME,					
+DateTo DATETIME,					
+PRIMARY KEY(Device_ID, DateFrom),					
+FOREIGN KEY (Device_ID) REFERENCES source_Device(Device_ID),					
+FOREIGN KEY (MetroStation_ID) REFERENCES source_MetroStation(MetroStation_ID)					
+);					
+					
+/*insert data*/					
+insert into source_MetroStation_Device (Device_ID,MetroStation_ID,DateFrom) values (1,1,'2019-01-01');					
+insert into source_MetroStation_Device (Device_ID,MetroStation_ID,DateFrom) values (2,1,'2019-01-01');					
+					
+					
+					
+					
+/*create table which actions that can be performed on devices (shafts)*/					
+Create table source_Action					
+(					
+Action_ID int,					
+name nvarchar(255),					
+PRIMARY KEY(Action_ID)					
+);					
+/*insert data*/					
+insert into source_Action values (0,'Close');					
+insert into source_Action values (1,'Open');					
+					
+					
+					
+/*create table which shows actions and their values and on which devices they were perfomed in time*/					
+Create table source_Action_Device_Log					
+(					
+id int IDENTITY(1,1),					
+Device_ID int,					
+Action_ID int,					
+dateAndTIme DATETIME,					
+FOREIGN KEY (Device_ID) REFERENCES source_Device(Device_ID),					
+FOREIGN KEY (Action_ID) REFERENCES source_Action(Action_ID)					
+);					
+/*insert data*/					
+insert into source_Action_Device_Log(Device_ID,Action_ID,dateAndTime) values (1,0,'2020-12-01 19:11:00');					
+insert into source_Action_Device_Log(Device_ID,Action_ID,dateAndTime) values (1,1,'2020-12-01 20:15:00');					
+insert into source_Action_Device_Log(Device_ID,Action_ID,dateAndTime) values (1,0,'2020-12-01 22:11:00');					
+					
 

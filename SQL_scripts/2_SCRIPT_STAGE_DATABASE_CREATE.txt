@@ -106,7 +106,7 @@ T_ID int,
 S_ID int,
 MetroStation_ID int,
 Sensor_ID int,
-Passenger_value float,
+Passenger_value int,
 dateAndTime DateTime
 )
 
