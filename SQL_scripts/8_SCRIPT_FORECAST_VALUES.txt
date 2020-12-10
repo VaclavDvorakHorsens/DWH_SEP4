@@ -1,6 +1,5 @@
-/*THIS SCRIPT RETURNS AVG ENVIRONMENTAL VALUES IN PREDEFINED TIME PERIODS BASED ON PROVIDED DATE*/
+
 Select
-/*return avg CO2 values during specific time periods*/
 (select avg(co2_value) from copenhagenmetro_dwh.dbo.f_CO2_EnvironmentValue CO2V
 join copenhagenmetro_dwh.dbo.dim_Time T	on CO2V.T_ID=T.T_ID where t.Hour= 7 OR t.Hour=8 OR t.Hour=9 AND t.Minute=0)
 as avgCO2_7to9,
@@ -52,4 +51,4 @@ as avgTemperature_15to17,
 (select avg(Passenger_Value) from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV
 join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID where t.Hour= 19 OR t.Hour=20 OR t.Hour=21 AND t.Minute=0)
 as avgTemperature_19to21
-FROM CopenhagenMetro_DWH.dbo.dim_Date where CalendarDate=':myDate'; /*in format YYYY-MM-DD */
+FROM CopenhagenMetro_DWH.dbo.dim_Date where CalendarDate=':myDate';

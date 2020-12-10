@@ -1,6 +1,6 @@
 package dwh.controllers;
 
-import dwh.adapters.DWHEnviomentDataAdapterImpl;
+import dwh.adapters.DWHEnvironmentDataAdapterImpl;
 import dwh.adapters.DWHEnviromentDataAdapter;
 import dwh.models.*;
 import bridgeApp.WebSocketConnection;
@@ -28,7 +28,7 @@ public class EnvironmentDataController {
 
     public EnvironmentDataController() {
 
-        environmentDataAdapter = new DWHEnviomentDataAdapterImpl();
+        environmentDataAdapter = new DWHEnvironmentDataAdapterImpl();
         builder = new GsonBuilder();
         gson = builder.create();
         webSocketConnection=WebSocketConnection.getInstance();
@@ -72,8 +72,8 @@ public class EnvironmentDataController {
         Date startDate = gson.fromJson(decodedStartDate, Date.class);
         Date endDate = gson.fromJson(decodedEndDate, Date.class);
         if (startDate.before(endDate)) {
-            java.sql.Date startDateSql = new java.sql.Date(startDate.getDay(), startDate.getMonth(), startDate.getYear());
-            java.sql.Date endDateSql = new java.sql.Date(endDate.getDay(), endDate.getMonth(), endDate.getYear());
+            Date startDateSql = new Date(startDate.getDay(), startDate.getMonth(), startDate.getYear());
+            Date endDateSql = new Date(endDate.getDay(), endDate.getMonth(), endDate.getYear());
             System.out.println("return data from");
             String jsonToAND = gson.toJson(environmentDataAdapter.getEnvironmentalValuesFromDatabaseGivenDate(startDateSql, endDateSql));
             return jsonToAND;
@@ -126,10 +126,17 @@ public class EnvironmentDataController {
     public String getForecast(@RequestParam String date)
     {
         String split[] = date.split("-");
-        java.sql.Date temp= new java.sql.Date(Integer.parseInt(split[0]),Integer.parseInt(split[1]),Integer.parseInt(split[2]));
+        Date temp = new Date(Integer.parseInt(split[2]),Integer.parseInt(split[1]),Integer.parseInt(split[0]));
         Forecast forecast = environmentDataAdapter.getForecast(temp);
-        String jsonString = gson.toJson(forecast);
 
+        String jsonString;
+        if(forecast != null)
+        {
+            jsonString = gson.toJson(forecast);
+        }
+        else {
+            jsonString = gson.toJson("No results");
+        }
         return jsonString;
     }
 }

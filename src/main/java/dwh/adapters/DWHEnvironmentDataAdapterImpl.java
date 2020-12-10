@@ -3,11 +3,10 @@ package dwh.adapters;
 import bridgeApp.dbconnection.DbConnectionManager;
 import dwh.models.EnvironmentalValues;
 import dwh.models.Forecast;
-
+import dwh.models.Date;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -16,11 +15,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DWHEnviomentDataAdapterImpl implements DWHEnviromentDataAdapter {
+public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
 
     private DbConnectionManager dbConnectionManager;
 
-    public DWHEnviomentDataAdapterImpl() {
+    public DWHEnvironmentDataAdapterImpl() {
         dbConnectionManager = new DbConnectionManager();
     }
 
@@ -88,7 +87,7 @@ public class DWHEnviomentDataAdapterImpl implements DWHEnviromentDataAdapter {
             int temperature_sensor = (int) read.get(i)[5];
             int passenger_value = (int) read.get(i)[6];
             int passenger_sensor = (int) read.get(i)[7];
-            Date date = (Date) read.get(i)[8];
+            java.util.Date date = (java.util.Date) read.get(i)[8];
 
             EnvironmentalValues object = new EnvironmentalValues(CO2_value, CO2_sensor, humidity_value, humidity_sensor, temperature_value,
                     temperature_sensor, passenger_value, passenger_sensor, date);
@@ -151,35 +150,59 @@ public class DWHEnviomentDataAdapterImpl implements DWHEnviromentDataAdapter {
             e.printStackTrace();
         }
 
-        String replace = query.replaceAll(":myDate", date.toString());
+
+        String day = date.getDay() + "";
+        String month = date.getMonth() + "";
+        String year = date.getYear() + "";
+
+        if(date.getDay() <= 9)
+        {
+             day = "0" + date.getDay();
+        }
+
+         if(date.getMonth() <= 9)
+        {
+            month = "0" + date.getMonth();
+        }
+
+
+        String replace = query.replaceAll(":myDate", year+ "-" + month + "-" + day);
 
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(replace);
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
 
-        int avgCO2_7to9 = (int) read.get(0)[0];
-        int avgCO2_11to13 = (int) read.get(0)[1];
-        int avgCO2_15to17 = (int) read.get(0)[2];
-        int avgCO2_19to21 = (int) read.get(0)[3];
+        if(read.size() != 0) {
 
-        int avgHumidity_7to9 = (int) read.get(0)[4];
-        int avgHumidity_11to13 = (int) read.get(0)[5];
-        int avgHumidity_15to17 = (int) read.get(0)[6];
-        int avgHumidity_19to21 = (int) read.get(0)[7];
+            int avgCO2_7to9 = (int) Math.round((Double) read.get(0)[0]);
+            int avgCO2_11to13 = (int) Math.round((Double) read.get(0)[1]);
+            int avgCO2_15to17 = (int) Math.round((Double) read.get(0)[2]);
+            int avgCO2_19to21 = (int) Math.round((Double) read.get(0)[3]);
 
-        int avgTemperature_7to9 = (int) read.get(0)[4];
-        int avgTemperature_11to13 = (int) read.get(0)[5];
-        int avgTemperature_15to17 = (int) read.get(0)[6];
-        int avgTemperature_19to21 = (int) read.get(0)[7];
+            int avgHumidity_7to9 = (int) Math.round((Double) read.get(0)[4]);
+            int avgHumidity_11to13 = (int) Math.round((Double) read.get(0)[5]);
+            int avgHumidity_15to17 = (int) Math.round((Double) read.get(0)[6]);
+            int avgHumidity_19to21 = (int) Math.round((Double) read.get(0)[7]);
 
-        Forecast forecast = new Forecast();
-        forecast.setCO2Forecast(avgCO2_7to9, avgCO2_11to13, avgCO2_15to17, avgCO2_19to21);
-        forecast.setHumidityForecast(avgHumidity_7to9, avgHumidity_11to13, avgHumidity_15to17, avgHumidity_19to21);
-        forecast.setTemperatureForecast(avgTemperature_7to9, avgTemperature_11to13, avgTemperature_15to17, avgTemperature_19to21);
+            int avgTemperature_7to9 = (int) Math.round((Double) read.get(0)[8]);
+            int avgTemperature_11to13 = (int) Math.round((Double) read.get(0)[9]);
+            int avgTemperature_15to17 = (int) Math.round((Double) read.get(0)[10]);
+            int avgTemperature_19to21 = (int) Math.round((Double) read.get(0)[11]);
 
-        dbConnectionManager.closeConnectionToDatabase();
+            Forecast forecast = new Forecast();
+            forecast.setCO2Forecast(avgCO2_7to9, avgCO2_11to13, avgCO2_15to17, avgCO2_19to21);
+            forecast.setHumidityForecast(avgHumidity_7to9, avgHumidity_11to13, avgHumidity_15to17, avgHumidity_19to21);
+            forecast.setTemperatureForecast(avgTemperature_7to9, avgTemperature_11to13, avgTemperature_15to17, avgTemperature_19to21);
 
-        return forecast;
+            dbConnectionManager.closeConnectionToDatabase();
+
+            System.out.println(forecast.toString());
+            return forecast;
+        }
+        else {
+            dbConnectionManager.closeConnectionToDatabase();
+            return null;
+        }
     }
 
 }
