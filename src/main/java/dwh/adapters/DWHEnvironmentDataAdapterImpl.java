@@ -170,37 +170,49 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
 
-        if(read.size() <= 0 || read.get(0)[0] != null) {
+        if(read.size() > 0 ) {
 
-            int avgCO2_7to9 = (int) Math.round((Double) read.get(0)[0]);
-            int avgCO2_11to13 = (int) Math.round((Double) read.get(0)[1]);
-            int avgCO2_15to17 = (int) Math.round((Double) read.get(0)[2]);
-            int avgCO2_19to21 = (int) Math.round((Double) read.get(0)[3]);
+            for(int i = 0; i < 16; i++)
+            {
+                if(read.get(0)[i] == null)
+                {
+                    read.get(0)[i] = 9999999.0;
+                }
+            }
 
-            int avgHumidity_7to9 = (int) Math.round((Double) read.get(0)[4]);
-            int avgHumidity_11to13 = (int) Math.round((Double) read.get(0)[5]);
-            int avgHumidity_15to17 = (int) Math.round((Double) read.get(0)[6]);
-            int avgHumidity_19to21 = (int) Math.round((Double) read.get(0)[7]);
+              int avgCO2_7to9 = (int) Math.round((Double) read.get(0)[0]);
+              int avgCO2_11to13 = (int) Math.round((Double) read.get(0)[1]);
+              int avgCO2_15to17 = (int) Math.round((Double) read.get(0)[2]);
+              int avgCO2_19to21 = (int) Math.round((Double) read.get(0)[3]);
 
-            int avgTemperature_7to9 = (int) Math.round((Double) read.get(0)[8]);
-            int avgTemperature_11to13 = (int) Math.round((Double) read.get(0)[9]);
-            int avgTemperature_15to17 = (int) Math.round((Double) read.get(0)[10]);
-            int avgTemperature_19to21 = (int) Math.round((Double) read.get(0)[11]);
+              int avgHumidity_7to9 = (int) Math.round((Double) read.get(0)[4]);
+              int avgHumidity_11to13 = (int) Math.round((Double) read.get(0)[5]);
+              int avgHumidity_15to17 = (int) Math.round((Double) read.get(0)[6]);
+              int avgHumidity_19to21 = (int) Math.round((Double) read.get(0)[7]);
 
-            Forecast forecast = new Forecast();
-            forecast.setCO2Forecast(avgCO2_7to9, avgCO2_11to13, avgCO2_15to17, avgCO2_19to21);
-            forecast.setHumidityForecast(avgHumidity_7to9, avgHumidity_11to13, avgHumidity_15to17, avgHumidity_19to21);
-            forecast.setTemperatureForecast(avgTemperature_7to9, avgTemperature_11to13, avgTemperature_15to17, avgTemperature_19to21);
+              int avgTemperature_7to9 = (int) Math.round((Double) read.get(0)[8]);
+              int avgTemperature_11to13 = (int) Math.round((Double) read.get(0)[9]);
+              int avgTemperature_15to17 = (int) Math.round((Double) read.get(0)[10]);
+              int avgTemperature_19to21 = (int) Math.round((Double) read.get(0)[11]);
 
-            dbConnectionManager.closeConnectionToDatabase();
+               int avgPassengers_7to9 = (int) Math.round((Double) read.get(0)[12]);
+               int avgPassengers_11to13 = (int) Math.round((Double) read.get(0)[13]);
+               int avgPassengers_15to17 = (int) Math.round((Double) read.get(0)[14]);
+               int avgPassengers_19to21 = (int) Math.round((Double) read.get(0)[15]);
 
-            System.out.println(forecast.toString());
-            return forecast;
+                Forecast forecast = new Forecast();
+                forecast.setCO2Forecast(avgCO2_7to9, avgCO2_11to13, avgCO2_15to17, avgCO2_19to21);
+                forecast.setHumidityForecast(avgHumidity_7to9, avgHumidity_11to13, avgHumidity_15to17, avgHumidity_19to21);
+                forecast.setTemperatureForecast(avgTemperature_7to9, avgTemperature_11to13, avgTemperature_15to17, avgTemperature_19to21);
+                forecast.setNumberOfPassengersForecast(avgPassengers_7to9, avgPassengers_11to13, avgPassengers_15to17, avgPassengers_19to21);
+
+                dbConnectionManager.closeConnectionToDatabase();
+
+                return forecast;
         }
-        else {
             dbConnectionManager.closeConnectionToDatabase();
             return null;
-        }
+
     }
 
 }

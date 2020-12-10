@@ -21,7 +21,7 @@ insert into [stage_dim_Action](
 [Action_ID],[name])
 select
 [CopenhagenMetro].[dbo].[source_Action].[Action_ID],
-[CopenhagenMetro].[dbo].[source_Action].[name]
+[CopenhagenMetro].[dbo].[source_Action].[name] from
 [CopenhagenMetro].[dbo].[source_Action];
 /*Clean the table from null and empty values*/
 update stage_dim_Action set name='NO VALUE' where name is Null;
@@ -92,12 +92,10 @@ select
 /*Fill the dim table for Action from the CopenhagenMetro_stage database*/
 use CopenhagenMetro_DWH;
 insert into [dim_Action](
-[Action_ID],[name],[ValidFrom],[ValidTo])
+[Action_ID],[name])
 select
 [CopenhagenMetro_stage].[dbo].[stage_dim_Action].[Action_ID],
-[CopenhagenMetro_stage].[dbo].[stage_dim_Action].[name],
-[CopenhagenMetro_stage].[dbo].[stage_dim_Action].[ValidFrom],
-[CopenhagenMetro_stage].[dbo].[stage_dim_Action].[ValidTo]from
+[CopenhagenMetro_stage].[dbo].[stage_dim_Action].[name] from
 [CopenhagenMetro_stage].[dbo].[stage_dim_Action];
 
 
