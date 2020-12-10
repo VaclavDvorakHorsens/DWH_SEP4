@@ -21,10 +21,6 @@ public class EnvironmentDataAdapterImpl implements EnvironmentDataAdapter {
     }
 
 
-    /**
-     * Insert the environmental values into the source Database.
-     * @param environmentalValues
-     */
     @Override
     public void addEnvironmentalValuesToDB(EnvironmentalValues environmentalValues) {
         if(!(environmentalValues.getCO2_value() <= 0 || environmentalValues.getHumidity_value() <= 0))
