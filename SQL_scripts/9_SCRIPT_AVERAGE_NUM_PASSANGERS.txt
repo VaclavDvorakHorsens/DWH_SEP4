@@ -1,0 +1,6 @@
+/*servers as a ad hoc request from Administrator to know average number on metro station for given date/hour*/
+/*since SEP4 includes only one metro station, metro station is not included into the query*/
+select avg(Passenger_Value) as avgPassenger from copenhagenmetro_dwh.dbo.f_Passenger_EnvironmentValue PASV  
+join copenhagenmetro_dwh.dbo.dim_Time T	on PASV.T_ID=T.T_ID 
+join copenhagenmetro_dwh.dbo.dim_Date Date on PASV.Date_ID=Date.Date_ID
+where Date.CalendarDate=':myDate' and (t.Hour= ':myHour' OR (t.Hour=':myHour'+1 AND t.Minute=0));  /*in format YYYY-MM-DD */
