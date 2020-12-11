@@ -129,14 +129,9 @@ public class EnvironmentDataController {
         Date temp = new Date(Integer.parseInt(split[2]),Integer.parseInt(split[1]),Integer.parseInt(split[0]));
         Forecast forecast = environmentDataAdapter.getForecast(temp);
 
-        String jsonString;
-        if(forecast != null)
-        {
-            jsonString = gson.toJson(forecast);
-        }
-        else {
-            jsonString = gson.toJson("No results");
-        }
+        String jsonString = gson.toJson(forecast);
+        System.out.println(jsonString);
+
         return jsonString;
     }
 }
