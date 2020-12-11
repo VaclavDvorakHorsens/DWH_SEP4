@@ -41,7 +41,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
         int humidity_sensor = (int) read.get(0)[3];
         double temperature_value = (double) read.get(0)[4];
         int temperature_sensor = (int) read.get(0)[5];
-        double passenger_value = (double) read.get(0)[6];
+        int passenger_value = (int )read.get(0)[6];
         int passenger_sensor = (int) read.get(0)[7];
         String test=(String)read.get(0)[8];
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
