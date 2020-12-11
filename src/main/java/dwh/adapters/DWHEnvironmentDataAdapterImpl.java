@@ -31,17 +31,18 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
 
         String sqlGet ="SELECT TOP 1 CO2_value,CO2_sensor,Humidity_value,Humidity_sensor,Temp_value,Temp_sensor, Passangers_value, " +
                 "Passangers_sensor,DateTime FROM f_EnvironmentalValues_View ORDER BY DateTime DESC;" ;
+
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(sqlGet);
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
-        dbConnectionManager.closeConnectionToDatabase();
-        double CO2_value = (double) read.get(0)[0];
+
+        int CO2_value = (int) Math.round((Double) read.get(0)[0]);
         int CO2_sensor = (int) read.get(0)[1];
-        double humidity_value = (double) read.get(0)[2];
+        int humidity_value = (int) Math.round((Double) read.get(0)[2]);
         int humidity_sensor = (int) read.get(0)[3];
-        double temperature_value = (double) read.get(0)[4];
+        int temperature_value = (int) Math.round((Double) read.get(0)[4]);
         int temperature_sensor = (int) read.get(0)[5];
-        double passenger_value = (double) read.get(0)[6];
+        int passenger_value = (int) read.get(0)[6];
         int passenger_sensor = (int) read.get(0)[7];
         String test=(String)read.get(0)[8];
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -53,8 +54,9 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
             e.printStackTrace();
         }
 
-        return new EnvironmentalValues((int)CO2_value, CO2_sensor, (int)humidity_value, humidity_sensor, (int)temperature_value,
-                temperature_sensor, (int)passenger_value, passenger_sensor, testDate);
+        dbConnectionManager.closeConnectionToDatabase();
+        return new EnvironmentalValues(CO2_value, CO2_sensor, humidity_value, humidity_sensor, temperature_value,
+                temperature_sensor, passenger_value, passenger_sensor, testDate);
     }
 
     /*  CONNECT TO THE VIEW */
