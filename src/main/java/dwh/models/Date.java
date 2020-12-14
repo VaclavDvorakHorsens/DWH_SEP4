@@ -1,5 +1,7 @@
 package dwh.models;
 
+import java.time.LocalDate;
+
 public class Date {
     private int year;
     private int month;
@@ -7,12 +9,14 @@ public class Date {
 
     public Date(int day,int month,int year)
     {
-        if(day<=31) this.day=day;
-        if(month<=12)  this.month=month;
+        if(day>0 && day<=31) this.day=day;
+        if(month>0 && month<=12)  this.month=month;
         this.year=year;
     }
     public Date(){
-
+        day=LocalDate.now().getDayOfMonth();
+        month=LocalDate.now().getMonthValue();
+        year=LocalDate.now().getYear();
     }
     public int getYear() {
         return year;
@@ -27,15 +31,15 @@ public class Date {
     }
 
     public void setMonth(int month) {
-        if(month<=12) this.month = month;
+        if(month>0 && month<=12) this.month = month;
     }
 
     public int getDay() {
          return day;
     }
 
-    public void setDay(int day) {
-        if(month<=12) this.day = day;
+    public void setDay(int day)  {
+        if (day>0 && day<=31) this.day = day;
     }
     public boolean before(Date date)
     {//2020<2021
