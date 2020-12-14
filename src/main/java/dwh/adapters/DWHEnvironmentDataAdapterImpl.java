@@ -37,6 +37,8 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
 
+        dbConnectionManager.closeConnectionToDatabase();
+
         int CO2_value = (int) Math.round((Double) read.get(0)[0]);
         int CO2_sensor = (int) read.get(0)[1];
         int humidity_value = (int) Math.round((Double) read.get(0)[2]);
@@ -55,7 +57,6 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
             e.printStackTrace();
         }
 
-        dbConnectionManager.closeConnectionToDatabase();
         return new EnvironmentalValues(CO2_value, CO2_sensor, humidity_value, humidity_sensor, temperature_value,
                 temperature_sensor, passenger_value, passenger_sensor, testDate);
     }
@@ -79,6 +80,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
             e.printStackTrace();
         }
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
+        dbConnectionManager.closeConnectionToDatabase();
 
         for(int i = 0; i < read.size(); i++)
         {
@@ -97,7 +99,6 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
 
             values.add(object);
         }
-        dbConnectionManager.closeConnectionToDatabase();
 
         return values;
 
@@ -162,6 +163,8 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
 
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
 
+        dbConnectionManager.closeConnectionToDatabase();
+
         if(read.size() > 0 ) {
 
             for(int i = 0; i < 16; i++)
@@ -198,7 +201,6 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
                 forecast.setTemperatureForecast(avgTemperature_7to9, avgTemperature_11to13, avgTemperature_15to17, avgTemperature_19to21);
                 forecast.setNumberOfPassengersForecast(avgPassengers_7to9, avgPassengers_11to13, avgPassengers_15to17, avgPassengers_19to21);
 
-                dbConnectionManager.closeConnectionToDatabase();
 
                 return forecast;
         }
@@ -237,12 +239,10 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
 
         String replace = query.replaceAll(":myDate", sqlDate).replaceAll(":myHour", String.valueOf(hour));
 
-        System.out.println(replace);
-
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(replace);
-
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
 
+        dbConnectionManager.closeConnectionToDatabase();
         if(read.size() > 0)
         {
             if(read.get(0)[0] == null)
