@@ -164,7 +164,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
 
         if(read.size() > 0 ) {
 
-            for(int i = 0; i < 16; i++)
+            for(int i = 0; i < 12; i++)
             {
                 if(read.get(0)[i] == null)
                 {
@@ -187,10 +187,17 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
               int avgTemperature_15to17 = (int) Math.round((Double) read.get(0)[10]);
               int avgTemperature_19to21 = (int) Math.round((Double) read.get(0)[11]);
 
-               int avgPassengers_7to9 = (int) Math.round((Double) read.get(0)[12]);
-               int avgPassengers_11to13 = (int) Math.round((Double) read.get(0)[13]);
-               int avgPassengers_15to17 = (int) Math.round((Double) read.get(0)[14]);
-               int avgPassengers_19to21 = (int) Math.round((Double) read.get(0)[15]);
+            for(int i = 12; i < 16; i++)
+            {
+                if(read.get(0)[i] == null)
+                {
+                    read.get(0)[i] = 9999999;
+                }
+            }
+               int avgPassengers_7to9 = (int) read.get(0)[12];
+               int avgPassengers_11to13 = (int)  read.get(0)[13];
+               int avgPassengers_15to17 = (int)  read.get(0)[14];
+               int avgPassengers_19to21 = (int) read.get(0)[15];
 
                 Forecast forecast = new Forecast();
                 forecast.setCO2Forecast(avgCO2_7to9, avgCO2_11to13, avgCO2_15to17, avgCO2_19to21);
