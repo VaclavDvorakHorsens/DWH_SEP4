@@ -1,4 +1,5 @@
 /*this is a DWH view for Android to get latest environmental values. it shows only the latest value*/
+/*in this case DWH is ready for the possiblity that there would be more than one Metro Station and C02/Temperature/Humidity/Motion sensor*/
 
 /*run the use command first*/
 use CopenhagenMetro_DWH;

@@ -46,6 +46,9 @@ public class EnvironmentDataController {
     @GetMapping("/DataValues")
     public /*List<String>*/String getValues() {
 
+
+
+
         EnvironmentalValues test =environmentDataAdapter.getLatestEnvironmentalValue();
         test.setShaftPos(webSocketConnection.getShaftStatus());
 
