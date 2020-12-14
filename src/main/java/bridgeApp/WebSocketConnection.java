@@ -152,10 +152,12 @@ public class WebSocketConnection implements WebSocket.Listener {
         int temperature = Integer.parseInt(dataAsHex.substring(0, 4), 16) / 10;
         int humidity = Integer.parseInt(dataAsHex.substring(4, 8), 16) / 10;
         int co2 = Integer.parseInt(dataAsHex.substring(8, 12), 16) / 10;
-        shaftStatus = Integer.parseInt(dataAsHex.substring(12), 16);
+        shaftStatus = Integer.parseInt(dataAsHex.substring(12, 16), 16);
+        int passengers = Integer.parseInt(dataAsHex.substring(16), 16);
+
         EnvironmentalValues dataCollection = new EnvironmentalValues(
-                co2, 1, humidity, 1, temperature,
-                1, 0, 0, new Date());
+                co2, 2, humidity, 1, temperature,
+                1, passengers, 3, new Date());
         System.out.println("Data Received From Loriot: " + dataCollection);
         System.out.println("Shaft status " + shaftStatus);
 

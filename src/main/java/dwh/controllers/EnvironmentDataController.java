@@ -23,8 +23,7 @@ public class EnvironmentDataController {
     private GsonBuilder builder;
     private Gson gson;
     private int shaftAction;
-    WebSocketConnection webSocketConnection;
-
+    private WebSocketConnection webSocketConnection;
 
     public EnvironmentDataController() {
 
@@ -48,7 +47,7 @@ public class EnvironmentDataController {
     public /*List<String>*/String getValues() {
 
         EnvironmentalValues test =environmentDataAdapter.getLatestEnvironmentalValue();
-        test.setShaftPos(shaftAction);
+        test.setShaftPos(webSocketConnection.getShaftStatus());
 
         String jsonString = gson.toJson(test);
 
@@ -133,6 +132,15 @@ public class EnvironmentDataController {
         System.out.println(jsonString);
 
         return jsonString;
+    }
+
+    @GetMapping("/GetAverageNumberOfPeople")
+    public int getAverageNumberOfPeople(@RequestParam String date, int hour)
+    {
+        String split[] = date.split("-");
+        Date temp = new Date(Integer.parseInt(split[2]),Integer.parseInt(split[1]),Integer.parseInt(split[0]));
+
+        return  environmentDataAdapter.getAverageNumberOfPeople(temp, hour);
     }
 }
 

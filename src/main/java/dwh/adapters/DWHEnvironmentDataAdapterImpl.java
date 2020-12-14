@@ -101,6 +101,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
         return values;
 
     }
+
     /**
      *
      * @param action an integer value that will be inserted into the database. This value represents the state of the shaft that the android application has sent
@@ -152,21 +153,9 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
             e.printStackTrace();
         }
 
-        String day = date.getDay() + "";
-        String month = date.getMonth() + "";
-        String year = date.getYear() + "";
+        String sqlDate = constructDate(date);
 
-        if(date.getDay() <= 9)
-        {
-             day = "0" + date.getDay();
-        }
-
-         if(date.getMonth() <= 9)
-        {
-            month = "0" + date.getMonth();
-        }
-
-        String replace = query.replaceAll(":myDate", year+ "-" + month + "-" + day);
+        String replace = query.replaceAll(":myDate", sqlDate);
 
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(replace);
 
@@ -215,6 +204,52 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
             dbConnectionManager.closeConnectionToDatabase();
             return null;
 
+    }
+
+    @Override
+    public int getAverageNumberOfPeople(Date date, int hour) {
+        dbConnectionManager.openConnectionToDWHDatabase();
+
+        String query = "";
+        try {
+            query = new String(Files.readAllBytes(Paths.get("SQL_scripts/9_SCRIPT_AVERAGE_NUM_PASSANGERS.txt")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String sqlDate = constructDate(date);
+
+        String replace = query.replaceAll(":myDate", sqlDate).replaceAll(":myHour", String.valueOf(hour));
+
+        PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(replace);
+
+        ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
+
+        if(read.size() > 0)
+        {
+            return (int) read.get(0)[0];
+        }
+
+        return 9999999;
+    }
+
+    private String constructDate(Date date)
+    {
+        String day = date.getDay() + "";
+        String month = date.getMonth() + "";
+        String year = date.getYear() + "";
+
+        if(date.getDay() <= 9)
+        {
+            day = "0" + date.getDay();
+        }
+
+        if(date.getMonth() <= 9)
+        {
+            month = "0" + date.getMonth();
+        }
+
+        return year + "-" + month + "-" + day;
     }
 
 }

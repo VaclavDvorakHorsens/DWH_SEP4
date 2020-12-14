@@ -12,4 +12,6 @@ public interface DWHEnviromentDataAdapter {
     void setAction(int action);
     int getAction();
     Forecast getForecast(Date date);
+    int getAverageNumberOfPeople(Date date, int hour);
+
 }
