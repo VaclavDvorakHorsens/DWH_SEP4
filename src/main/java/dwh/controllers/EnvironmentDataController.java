@@ -49,6 +49,9 @@ public class EnvironmentDataController {
     @GetMapping("/DataValues")
     public String getValues() {
 
+
+
+
         EnvironmentalValues test =environmentDataAdapter.getLatestEnvironmentalValue();
         test.setShaftPos(shaftAction);
 
