@@ -31,28 +31,16 @@ public class EnvironmentDataController {
         builder = new GsonBuilder();
         gson = builder.create();
         webSocketConnection=WebSocketConnection.getInstance();
-
     }
 
-    @PostMapping("/DataValues")
-    public ResponseEntity<String> postValues(@RequestBody String value) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("PostData", "success");
-
-        //    environmentDataAdapter.addEnvironmentalValuesToDB(value);
-        return new ResponseEntity<>(headers, HttpStatus.OK);
-    }
 
     @GetMapping("/DataValues")
-    public /*List<String>*/String getValues() {
+    public String getValues() {
 
+        EnvironmentalValues latest =environmentDataAdapter.getLatestEnvironmentalValue();
+        latest.setShaftPos(webSocketConnection.getShaftStatus());
 
-
-
-        EnvironmentalValues test =environmentDataAdapter.getLatestEnvironmentalValue();
-        test.setShaftPos(webSocketConnection.getShaftStatus());
-
-        String jsonString = gson.toJson(test);
+        String jsonString = gson.toJson(latest);
 
         return jsonString;
     }
@@ -138,12 +126,12 @@ public class EnvironmentDataController {
     }
 
     @GetMapping("/GetAverageNumberOfPeople")
-    public int getAverageNumberOfPeople(@RequestParam String date, int hour)
+    public String getAverageNumberOfPeople()
     {
-        String split[] = date.split("-");
-        Date temp = new Date(Integer.parseInt(split[2]),Integer.parseInt(split[1]),Integer.parseInt(split[0]));
+        AverageNumberOfPeople people = new AverageNumberOfPeople(environmentDataAdapter.getAverageNumberOfPeople());
+        String jsonString = gson.toJson(people);
 
-        return  environmentDataAdapter.getAverageNumberOfPeople(temp, hour);
+        return jsonString;
     }
 }
 

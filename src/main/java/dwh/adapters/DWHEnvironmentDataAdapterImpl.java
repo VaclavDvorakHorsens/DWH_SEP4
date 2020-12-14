@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
@@ -89,7 +90,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
             int temperature_sensor = (int) read.get(i)[5];
             int passenger_value = (int) read.get(i)[6];
             int passenger_sensor = (int) read.get(i)[7];
-            java.util.Date date = (java.util.Date) read.get(i)[8];
+            java.util.Date date = (java.util.Date ) read.get(i)[8];
 
             EnvironmentalValues object = new EnvironmentalValues(CO2_value, CO2_sensor, humidity_value, humidity_sensor, temperature_value,
                     temperature_sensor, passenger_value, passenger_sensor, date);
@@ -207,7 +208,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
     }
 
     @Override
-    public int getAverageNumberOfPeople(Date date, int hour) {
+    public int getAverageNumberOfPeople() {
         dbConnectionManager.openConnectionToDWHDatabase();
 
         String query = "";
@@ -217,9 +218,26 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
             e.printStackTrace();
         }
 
-        String sqlDate = constructDate(date);
+        int year = Calendar.getInstance().get(Calendar.YEAR);
+        int month = Calendar.getInstance().get(Calendar.MONTH) + 1;
+        int day = Calendar.getInstance().get(Calendar.DATE);
+
+        String sqlDate = constructDate(new Date(day, month, year));
+
+        int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+
+        if(hour == 0)
+        {
+            hour = 23;
+        }
+        else
+        {
+            hour -= 1;
+        }
 
         String replace = query.replaceAll(":myDate", sqlDate).replaceAll(":myHour", String.valueOf(hour));
+
+        System.out.println(replace);
 
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(replace);
 
@@ -227,7 +245,13 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
 
         if(read.size() > 0)
         {
-            return (int) read.get(0)[0];
+            if(read.get(0)[0] == null)
+            {
+                return 9999999;
+            }
+            else {
+                return (int) read.get(0)[0];
+            }
         }
 
         return 9999999;
