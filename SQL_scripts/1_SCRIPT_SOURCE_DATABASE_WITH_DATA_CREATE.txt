@@ -1,4 +1,4 @@
-/*THIS SCRIPT CREATES SOURCE DATABASE AND FILLS IT WITH DATA*/					
+/*THIS SCRIPT CREATES SOURCE DATABASE AND FILLS TABLES WITH DATA*/					
 					
 					
 /*drop should be called on test environment only*/					
@@ -75,8 +75,8 @@ PRIMARY KEY(MetroStation_ID)
 );					
 /*insert data*/					
 insert into source_MetroStation values (1,'CopenhagenStation');					
-insert into source_MetroStation values (2,'DummyStationName_2');					
-insert into source_MetroStation values (3,'DummyStationName_3');					
+/*insert into source_MetroStation values (2,'DummyStationName_2');					
+insert into source_MetroStation values (3,'DummyStationName_3');*/					
 					
 					
 					
