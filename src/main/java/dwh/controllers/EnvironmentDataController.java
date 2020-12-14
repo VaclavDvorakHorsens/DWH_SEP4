@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -45,7 +47,7 @@ public class EnvironmentDataController {
     }
 
     @GetMapping("/DataValues")
-    public /*List<String>*/String getValues() {
+    public String getValues() {
 
         EnvironmentalValues test =environmentDataAdapter.getLatestEnvironmentalValue();
         test.setShaftPos(shaftAction);
@@ -83,7 +85,7 @@ public class EnvironmentDataController {
     }
 
     @PostMapping("/PostAction")
-    public ResponseEntity<String> postAction(@RequestBody boolean action) {
+    public ResponseEntity<String> postAction(@RequestParam boolean action) {
         //  From ANDROID action = true means open action=false means closed
         // value 14= closed 28 = open to send TO IOT
         System.out.println("Action : "+action);
@@ -134,5 +136,47 @@ public class EnvironmentDataController {
 
         return jsonString;
     }
+
+    @GetMapping("/GetLogList")
+    public String getListForecast()
+    {
+        Date temp = new Date();
+        int nextDay=temp.getDay()-1;
+        int nextMonth=temp.getDay()-1;
+        ArrayList<Forecast> listForecast= new ArrayList<>();
+        Forecast forecast = environmentDataAdapter.getForecast(temp);
+        listForecast.add(forecast);
+        String jsonString="";
+        for (int i = 0; i < 5; i++) {
+           nextDay-=1;
+           nextMonth-=1;
+            if( nextDay>0)
+            {
+                temp.setDay(nextDay);
+                listForecast.add(environmentDataAdapter.getForecast(temp));
+            }
+
+            // date 1-01-2020
+            if(nextDay == 0){
+                if( nextMonth>0)
+                {
+                    temp.setDay(LocalDate.of(temp.getYear(),temp.getMonth()-1,1).lengthOfMonth());
+                    temp.setMonth(temp.getMonth()-1);
+                    listForecast.add(environmentDataAdapter.getForecast(temp));
+                }
+                else {
+                    temp.setDay(31);
+                    temp.setMonth(12);
+                    temp.setYear(temp.getYear()-1);
+                    listForecast.add(environmentDataAdapter.getForecast(temp));
+                }
+            }
+        }
+
+             jsonString = gson.toJson(listForecast);
+           // System.out.println(jsonString);
+        return jsonString;
+    }
+
 }
 
