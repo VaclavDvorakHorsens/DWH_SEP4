@@ -156,13 +156,10 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
         }
 
         String sqlDate = constructDate(date);
-
         String replace = query.replaceAll(":myDate", sqlDate);
 
         PreparedStatement preparedStatement = dbConnectionManager.getPreparedStatement(replace);
-
         ArrayList<Object[]> read = dbConnectionManager.retrieveFromDatabase(preparedStatement);
-
         dbConnectionManager.closeConnectionToDatabase();
 
         if(read.size() > 0 ) {
@@ -201,10 +198,9 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
                 forecast.setTemperatureForecast(avgTemperature_7to9, avgTemperature_11to13, avgTemperature_15to17, avgTemperature_19to21);
                 forecast.setNumberOfPassengersForecast(avgPassengers_7to9, avgPassengers_11to13, avgPassengers_15to17, avgPassengers_19to21);
 
-
                 return forecast;
         }
-            dbConnectionManager.closeConnectionToDatabase();
+
             return null;
 
     }
