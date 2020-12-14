@@ -48,8 +48,6 @@ Name varchar(255)
 
 
 
-
-
 /*Create stage table for Sensor*/
 Create table stage_dim_Sensor
 (
@@ -64,6 +62,7 @@ Create table stage_dim_Device
 Device_ID int,
 Name varchar(255)
 );
+
 
 /*Create stage fact table for CO2 environmental values*/
 Create table stage_f_CO2_EnvironmentValue
