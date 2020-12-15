@@ -2,6 +2,8 @@ package dwh;
 
 
 import bridgeApp.WebSocketConnection;
+import com.google.gson.Gson;
+import dwh.models.Date;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -14,5 +16,6 @@ public class MainStart {
         WebSocketConnection webSocketConnection = WebSocketConnection.getInstance();
        // webSocketConnection.sendDownLink(14);
         SpringApplication.run(MainStart.class, args);
+
     }
 }
