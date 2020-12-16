@@ -48,8 +48,12 @@ from CopenhagenMetro_stage.dbo.stage_f_Action_Device_Log;
 
 /*INCREMENTAL LOAD, set last incremental load date*/
 /*after incremental load*/
-/*this is a version of update on google cloud, where the servers run in UTC-1 time*/ 
+/*this is a version of update on google cloud, where the servers run in UTC-1 time BUT THIS WILL STILL WORK ONLY IF GETDATE() IS SYNCHRONIZED WITH 
+WEBSERVICE/BRIDGE APPLICATION*/ 
 /*update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT DATEADD (hour, +1 ,GETDATE()));*/
-update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT GETDATE())
+/*update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT GETDATE())*/
 
+/*use this version, it takes the dateTime that was inserted into the source*/
+update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT TOP 1 dateAndTime from [CopenhagenMetro].[dbo].[source_Action_Device_Log]
+order by dateAndTime DESC);
 END
