@@ -22,12 +22,11 @@ public class WebSocketConnection implements WebSocket.Listener {
     private HttpClient client;
     private CompletableFuture<WebSocket> ws;
     private static WebSocketConnection instance;
-    private int shaftStatus = 0;
+    private int shaftStatus =0;
 
     private WebSocketConnection() {
         this.latch = new CountDownLatch(1);
         this.environmentDataAdapter = new EnvironmentDataAdapterImpl();
-
         client = HttpClient.newHttpClient();
         ws = client.newWebSocketBuilder()
                 .buildAsync(URI.create("wss://iotnet.cibicom.dk/app?token=vnoTOgAAABFpb3RuZXQuY2liaWNvbS5ka2z21adiqWKYdLsgxiOUnKc="),
@@ -58,11 +57,12 @@ public class WebSocketConnection implements WebSocket.Listener {
      * @param value the action value
      */
     public void sendDownLink(int value) {
+
         String JsonTel = "";
         if (value == 1) {
             JsonTel = "{\n" +
                     "    \"cmd\": \"tx\",\n" +
-                    "    \"EUI\": \"0004A30B00259F36\",\n" +
+                    "    \"EUI\": \"0004A30B00251192\",\n" +
                     "    \"port\": 2,\n" +
                     "    \"confirmed\": false,\n" +
                     "    \"data\": \"28\",\n" +
@@ -71,7 +71,7 @@ public class WebSocketConnection implements WebSocket.Listener {
         } else if (value == 0) {
             JsonTel = "{\n" +
                     "    \"cmd\": \"tx\",\n" +
-                    "    \"EUI\": \"0004A30B00259F36\",\n" +
+                    "    \"EUI\": \"0004A30B00251192\",\n" +
                     "    \"port\": 2,\n" +
                     "    \"confirmed\": false,\n" +
                     "    \"data\": \"14\",\n" +
@@ -176,14 +176,14 @@ public class WebSocketConnection implements WebSocket.Listener {
         int temperature = Integer.parseInt(dataAsHex.substring(0, 4), 16) / 10;
         int humidity = Integer.parseInt(dataAsHex.substring(4, 8), 16) / 10;
         int co2 = Integer.parseInt(dataAsHex.substring(8, 12), 16) / 10;
-        shaftStatus = Integer.parseInt(dataAsHex.substring(12, 16), 16);
+       int shaftStatus = Integer.parseInt(dataAsHex.substring(12, 16), 16);
+        setStatus(shaftStatus);
         int passengers = Integer.parseInt(dataAsHex.substring(16), 16);
 
         EnvironmentalValues dataCollection = new EnvironmentalValues(
                 co2, 2, humidity, 1, temperature,
                 1, passengers, 3, new Date());
         System.out.println("Data Received From Loriot: " + dataCollection);
-        System.out.println("Shaft status " + shaftStatus);
 
         // sending data to the database
         environmentDataAdapter.addEnvironmentalValuesToDB(dataCollection);
@@ -195,5 +195,10 @@ public class WebSocketConnection implements WebSocket.Listener {
      */
     public int getShaftStatus() {
         return shaftStatus;
+    }
+
+    public void setStatus(int status)
+    {
+        shaftStatus = status;
     }
 }

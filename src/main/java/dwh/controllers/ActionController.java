@@ -9,15 +9,16 @@ import dwh.adapters.ActionAdapterImpl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
 public class ActionController {
 
     private final ActionAdapter actionAdapter;
     private GsonBuilder builder;
     private Gson gson;
     private WebSocketConnection webSocketConnection;
+
 
     public ActionController() {
 
@@ -33,13 +34,14 @@ public class ActionController {
      * @return a ResponseEntity
      */
     @PostMapping("/PostAction")
-    public ResponseEntity<String> postAction(@RequestBody boolean action) {
+    public ResponseEntity<String> postAction(@RequestParam boolean action) {
         //  From ANDROID action = true means open action=false means closed
         // value 14= closed 28 = open to send TO IOT
-        System.out.println("Action : "+action);
+        System.out.println("Action received from Android: "+action +"\n");
         if(action==true) {
-            System.out.println("Send value 1");
+            System.out.println("");
             actionAdapter.setAction(1);
+
             webSocketConnection.sendDownLink(1);
             HttpHeaders headers = new HttpHeaders();
             headers.add("PostAction", "success");
@@ -48,7 +50,7 @@ public class ActionController {
 
         else if(action==false)
         {
-            System.out.println("Send value 0");
+            System.out.println("");
             actionAdapter.setAction(0);
             webSocketConnection.sendDownLink(0);
 
@@ -64,12 +66,12 @@ public class ActionController {
         return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
     }
 
-    /*Method not used */
-    /*
     @GetMapping("/GetAction")
     public int getAction() {
 
         return webSocketConnection.getShaftStatus();//+ environmentDataAdapter.getAction();
     }
- */
+
+
+
 }

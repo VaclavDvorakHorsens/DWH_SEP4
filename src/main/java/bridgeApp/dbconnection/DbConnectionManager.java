@@ -24,7 +24,7 @@ public class DbConnectionManager {
         {
             try {
                 connection = DriverManager.getConnection(url + driver + sourceDatabase, username, password);
-                System.out.println("Connected to database server.");
+            //    System.out.println("Connected to database server.");
 
             } catch (SQLException e) {
                 System.out.println("Connection failed.");
@@ -40,7 +40,7 @@ public class DbConnectionManager {
         {
             try {
                 connection = DriverManager.getConnection(url + driver + dataWarehouse, username, password);
-                System.out.println("Connected to database server.");
+             //   System.out.println("Connected to database server.");
 
             } catch (SQLException e) {
                 System.out.println("Connection failed.");
@@ -56,7 +56,7 @@ public class DbConnectionManager {
     {
         try {
             connection.close();
-            System.out.println("Close connection to database server");
+         //   System.out.println("Close connection to database server");
         } catch (SQLException e) {
             System.out.println("Closing failed");
             e.printStackTrace();

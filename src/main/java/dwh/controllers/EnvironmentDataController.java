@@ -28,6 +28,7 @@ public class EnvironmentDataController {
     }
 
 
+
     /**
      * Endpoint for retrieving the latest environmental data values.
      * @return a Json String
@@ -35,13 +36,15 @@ public class EnvironmentDataController {
     @GetMapping("/DataValues")
     public String getValues() {
 
-        EnvironmentalValues latest =environmentDataAdapter.getLatestEnvironmentalValue();
-        latest.setShaftPos(webSocketConnection.getShaftStatus());
+        EnvironmentalValues latest = environmentDataAdapter.getLatestEnvironmentalValue();
+       latest.setShaftPos(webSocketConnection.getShaftStatus());
 
+        System.out.println("Shaft status sent to Android: " + webSocketConnection.getShaftStatus() + "\n");
         String jsonString = gson.toJson(latest);
 
         return jsonString;
     }
+
 
     /*Method not used */
  /*

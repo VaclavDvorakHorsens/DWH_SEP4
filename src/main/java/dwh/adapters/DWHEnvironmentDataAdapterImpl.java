@@ -131,7 +131,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnvironmentDataAdapter 
             {
                 if(read.get(0)[i] == null)
                 {
-                    read.get(0)[i] = 9999999.0;
+                    read.get(0)[i] = -1.0;
                 }
             }
 
@@ -154,7 +154,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnvironmentDataAdapter 
             {
                 if(read.get(0)[i] == null)
                 {
-                    read.get(0)[i] = 9999999;
+                    read.get(0)[i] = -1;
                 }
             }
                int avgPassengers_7to9 = (int) read.get(0)[12];
