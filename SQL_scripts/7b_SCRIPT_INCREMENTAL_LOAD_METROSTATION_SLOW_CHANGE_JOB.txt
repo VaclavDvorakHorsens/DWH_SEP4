@@ -88,6 +88,4 @@ select MetroStation_ID, Name,(select LastUpdate+1 from CopenhagenMetro_DWH.dbo.d
 		
 		
 /*9.set new last update date*/	
-/*this is a version of update on google cloud, where the servers run in UTC-1 time*/ 
-/*update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT DATEADD (hour, +1 ,GETDATE()))*/	
 update CopenhagenMetro_DWH.dbo.dim_Update set LastUpdate=(SELECT GETDATE())		
