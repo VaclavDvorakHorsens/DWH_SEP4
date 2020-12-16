@@ -1,7 +1,7 @@
 package dwh.controllers;
 
 import dwh.adapters.DWHEnvironmentDataAdapterImpl;
-import dwh.adapters.DWHEnviromentDataAdapter;
+import dwh.adapters.DWHEnvironmentDataAdapter;
 import dwh.models.*;
 import bridgeApp.WebSocketConnection;
 import org.springframework.http.HttpHeaders;
@@ -9,17 +9,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.List;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
 
 @RestController
 public class EnvironmentDataController {
 
-    private final DWHEnviromentDataAdapter environmentDataAdapter;
+    private final DWHEnvironmentDataAdapter environmentDataAdapter;
     private GsonBuilder builder;
     private Gson gson;
     private int shaftAction;
@@ -34,6 +33,10 @@ public class EnvironmentDataController {
     }
 
 
+    /**
+     * Endpoint for retrieving the latest environmental data values.
+     * @return a Json String
+     */
     @GetMapping("/DataValues")
     public String getValues() {
 
@@ -45,11 +48,10 @@ public class EnvironmentDataController {
         return jsonString;
     }
 
-    //get values for a period of time
-    // localhost:8080/DataValuesByDate?date=startDate&date=endDate
+ /*
     @GetMapping("/DataValuesByDate")
     public String getValuesByDate(@RequestParam List<String> date) {
-//        //URl Decoding
+      //URl Decoding
         String decodedStartDate = "";
         String decodedEndDate = "";
         try {
@@ -71,7 +73,13 @@ public class EnvironmentDataController {
 
 
     }
+*/
 
+    /**
+     * Endpoint for posting an action value.
+     * @param action the required action
+     * @return a ResponseEntity
+     */
     @PostMapping("/PostAction")
     public ResponseEntity<String> postAction(@RequestBody boolean action) {
         //  From ANDROID action = true means open action=false means closed
@@ -105,13 +113,20 @@ public class EnvironmentDataController {
 
         return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
     }
+
+    /*
     @GetMapping("/GetAction")
     public int getAction() {
 
         return webSocketConnection.getShaftStatus();//+ environmentDataAdapter.getAction();
-
     }
+ */
 
+    /**
+     * Endpoint for retrieving a forecast.
+     * @param date the required date of desired forecast
+     * @return a Json String
+     */
     @GetMapping("/GetForecast")
     public String getForecast(@RequestParam String date)
     {
@@ -125,12 +140,57 @@ public class EnvironmentDataController {
         return jsonString;
     }
 
+    /**
+     * Endpoint for retrieving the average number of people in the station of the last hour.
+     * @return a Json String
+     */
     @GetMapping("/GetAverageNumberOfPeople")
     public String getAverageNumberOfPeople()
     {
         AverageNumberOfPeople people = new AverageNumberOfPeople(environmentDataAdapter.getAverageNumberOfPeople());
         String jsonString = gson.toJson(people);
 
+        return jsonString;
+    }
+
+    @GetMapping("/GetLogList")
+    public String getListForecast()
+    {
+        Date temp = new Date();
+        int nextDay=temp.getDay()-1;
+        int nextMonth=temp.getDay()-1;
+        ArrayList<Forecast> listForecast= new ArrayList<>();
+        Forecast forecast = environmentDataAdapter.getForecast(temp);
+        listForecast.add(forecast);
+        String jsonString="";
+        for (int i = 0; i < 5; i++) {
+            nextDay-=1;
+            nextMonth-=1;
+            if( nextDay>0)
+            {
+                temp.setDay(nextDay);
+                listForecast.add(environmentDataAdapter.getForecast(temp));
+            }
+
+            // date 1-01-2020
+            if(nextDay == 0){
+                if( nextMonth>0)
+                {
+                    temp.setDay(LocalDate.of(temp.getYear(),temp.getMonth()-1,1).lengthOfMonth());
+                    temp.setMonth(temp.getMonth()-1);
+                    listForecast.add(environmentDataAdapter.getForecast(temp));
+                }
+                else {
+                    temp.setDay(31);
+                    temp.setMonth(12);
+                    temp.setYear(temp.getYear()-1);
+                    listForecast.add(environmentDataAdapter.getForecast(temp));
+                }
+            }
+        }
+
+        jsonString = gson.toJson(listForecast);
+        // System.out.println(jsonString);
         return jsonString;
     }
 }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
+public class DWHEnvironmentDataAdapterImpl implements DWHEnvironmentDataAdapter {
 
     private DbConnectionManager dbConnectionManager;
 
@@ -24,7 +24,6 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
         dbConnectionManager = new DbConnectionManager();
     }
 
-    /*  CONNECT TO THE VIEW */
     @Override
     public EnvironmentalValues getLatestEnvironmentalValue() {
 
@@ -61,7 +60,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
                 temperature_sensor, passenger_value, passenger_sensor, testDate);
     }
 
-    /*  CONNECT TO THE VIEW */
+/*
     @Override
     public List<EnvironmentalValues> getEnvironmentalValuesFromDatabaseGivenDate(Date beginDate, Date endDate) {
 
@@ -103,11 +102,8 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
         return values;
 
     }
+    */
 
-    /**
-     *
-     * @param action an integer value that will be inserted into the database. This value represents the state of the shaft that the android application has sent
-     */
     @Override
     public void setAction(int action) {
         dbConnectionManager.openConnectionToSourceDatabase();
@@ -128,8 +124,9 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
         dbConnectionManager.closeConnectionToDatabase();
     }
 
+    /*
     @Override
-    public int getAction() {
+    public int getActionLog() {
 
         dbConnectionManager.openConnectionToSourceDatabase();
         String sqlGet ="SELECT TOP 1  Device_ID,Action_ID,dateAndTime FROM source_Action_Device_Log" ;
@@ -142,7 +139,7 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
         System.out.println("device " + device + " Shaft " + shaftCurrentPos + "Date " + testDate);
         return shaftCurrentPos;
     }
-
+*/
     @Override
     public Forecast getForecast(Date date) {
 
@@ -195,8 +192,8 @@ public class DWHEnvironmentDataAdapterImpl implements DWHEnviromentDataAdapter {
                 }
             }
                int avgPassengers_7to9 = (int) read.get(0)[12];
-               int avgPassengers_11to13 = (int)  read.get(0)[13];
-               int avgPassengers_15to17 = (int)  read.get(0)[14];
+               int avgPassengers_11to13 = (int) read.get(0)[13];
+               int avgPassengers_15to17 = (int) read.get(0)[14];
                int avgPassengers_19to21 = (int) read.get(0)[15];
 
                 Forecast forecast = new Forecast();

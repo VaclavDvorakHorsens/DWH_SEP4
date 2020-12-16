@@ -7,15 +7,19 @@ public class DbConnectionManager {
 
 
     String url = "jdbc:sqlserver://";
-    String driver = "35.228.243.131;";/*"34.66.112.80;";*//*LAPTOP-EHLE76UU;*/
+    String driver = "35.228.243.131 ;";
     String sourceDatabase = "databaseName=copenhagenmetro";
     String dataWarehouse = "databaseName=copenhagenmetro_dwh";
-    String username = /*"admin"*/ "admin";
-    String password = /*"admin"*/"admin";
+    String username = "admin";
+    String password = "admin";
     Connection connection;
     PreparedStatement preparedStatement;
     ResultSet resultSet;
 
+
+    /**
+     * Open the connection to the source database.
+     */
     public void openConnectionToSourceDatabase() {
         {
             try {
@@ -29,6 +33,9 @@ public class DbConnectionManager {
         }
     }
 
+    /**
+     * Open the connection to the data warehouse.
+     */
     public void openConnectionToDWHDatabase() {
         {
             try {
@@ -42,6 +49,9 @@ public class DbConnectionManager {
         }
     }
 
+    /**
+     * Close the database connection.
+     */
     public void closeConnectionToDatabase()
     {
         try {
@@ -53,6 +63,11 @@ public class DbConnectionManager {
         }
     }
 
+    /**
+     * Get the PreparedStatement from the connection.
+     * @param sql a String for containing SQL statements.
+     * @return a PreparedStatement.
+     */
     public PreparedStatement getPreparedStatement(String sql)
     {
         try {
@@ -66,6 +81,10 @@ public class DbConnectionManager {
         return preparedStatement;
     }
 
+    /**
+     * Execute the PreparedStatement
+     * @param preparedStatement
+     */
     public void addToDatabase(PreparedStatement preparedStatement)
     {
         try {
@@ -77,6 +96,11 @@ public class DbConnectionManager {
         }
     }
 
+    /**
+     * Execute the PreparedStatement and retrieve a ResultSet.
+     * @param preparedStatement
+     * @return an ArrayList<object[]>
+     */
     public ArrayList<Object[]> retrieveFromDatabase(PreparedStatement preparedStatement)
     {
         ArrayList<Object[]> results = new ArrayList<>();
