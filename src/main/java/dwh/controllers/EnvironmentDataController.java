@@ -4,9 +4,6 @@ import dwh.adapters.DWHEnvironmentDataAdapterImpl;
 import dwh.adapters.DWHEnvironmentDataAdapter;
 import dwh.models.*;
 import bridgeApp.WebSocketConnection;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -20,7 +17,6 @@ public class EnvironmentDataController {
     private final DWHEnvironmentDataAdapter environmentDataAdapter;
     private GsonBuilder builder;
     private Gson gson;
-    private int shaftAction;
     private WebSocketConnection webSocketConnection;
 
     public EnvironmentDataController() {
@@ -47,6 +43,7 @@ public class EnvironmentDataController {
         return jsonString;
     }
 
+    /*Method not used */
  /*
     @GetMapping("/DataValuesByDate")
     public String getValuesByDate(@RequestParam List<String> date) {
@@ -69,57 +66,9 @@ public class EnvironmentDataController {
             String jsonToAND = gson.toJson(environmentDataAdapter.getEnvironmentalValuesFromDatabaseGivenDate(startDateSql, endDateSql));
             return jsonToAND;
         } else return "Start date is after end date!";
-
-
     }
 */
 
-    /**
-     * Endpoint for posting an action value.
-     * @param action the required action
-     * @return a ResponseEntity
-     */
-    @PostMapping("/PostAction")
-    public ResponseEntity<String> postAction(@RequestBody boolean action) {
-        //  From ANDROID action = true means open action=false means closed
-        // value 14= closed 28 = open to send TO IOT
-        System.out.println("Action : "+action);
-        if(action==true) {
-            System.out.println("Send value 1");
-            environmentDataAdapter.setAction(1);
-            shaftAction=1;
-            webSocketConnection.sendDownLink(1);
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("PostAction", "success");
-            return new ResponseEntity<>(headers, HttpStatus.OK);
-        }
-
-        else if(action==false)
-        {
-            System.out.println("Send value 0");
-            environmentDataAdapter.setAction(0);
-            shaftAction=0;
-            webSocketConnection.sendDownLink(0);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("PostAction", "success");
-
-            return new ResponseEntity<>(headers, HttpStatus.OK);
-        }
-        // return bad request if values are outside of acceptable range
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("PostAction", "fail");
-
-        return new ResponseEntity<>(headers, HttpStatus.BAD_REQUEST);
-    }
-
-    /*
-    @GetMapping("/GetAction")
-    public int getAction() {
-
-        return webSocketConnection.getShaftStatus();//+ environmentDataAdapter.getAction();
-    }
- */
 
     /**
      * Endpoint for retrieving a forecast.
@@ -193,7 +142,6 @@ public class EnvironmentDataController {
         }
 
         jsonString = gson.toJson(listForecast);
-        // System.out.println(jsonString);
         return jsonString;
     }
 }
