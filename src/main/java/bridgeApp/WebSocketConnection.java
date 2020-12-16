@@ -43,12 +43,20 @@ public class WebSocketConnection implements WebSocket.Listener {
         return instance;
     }
 
+    /**
+     * on Open is called when the connection is made and opens a websocket listener.
+     * @param webSocket
+     */
     @Override
     public void onOpen(WebSocket webSocket) {
         System.out.println("Open connection");
         webSocket.request(1);
     }
 
+    /**
+     * Sends down a Json telegram to the servo
+     * @param value the action value
+     */
     public void sendDownLink(int value) {
         String JsonTel = "";
         if (value == 1) {
@@ -73,6 +81,11 @@ public class WebSocketConnection implements WebSocket.Listener {
         server.sendText(JsonTel, true);
     }
 
+    /**
+     * On errror is called when there occurs an error during the connection.
+     * @param webSocket
+     * @param error
+     */
     public void onError(WebSocket webSocket, Throwable error) {
         System.out.println(error.getMessage());
         error.printStackTrace();
@@ -105,6 +118,13 @@ public class WebSocketConnection implements WebSocket.Listener {
         return new CompletableFuture().completedFuture("Pong completed.").thenAccept(System.out::println);
     }
 
+    /**
+     * Used to receive incoming Json telegrams from IoT
+     * @param webSocket
+     * @param data
+     * @param last
+     * @return CompletableFuture
+     */
     public CompletionStage<?> onText​(WebSocket webSocket, CharSequence data, boolean last) {
         webSocket.request(1);
         String indented = data.toString();
@@ -119,6 +139,10 @@ public class WebSocketConnection implements WebSocket.Listener {
         return null;
     }
 
+    /**
+     * Handles the received data and forwards it to the database.
+     * @param jsonTelegram received data
+     */
     private void handleData(String jsonTelegram) {
         // parse the telegram from String to JSONObject
         var parser = new JSONParser();
@@ -165,6 +189,10 @@ public class WebSocketConnection implements WebSocket.Listener {
         environmentDataAdapter.addEnvironmentalValuesToDB(dataCollection);
     }
 
+    /**
+     * Gets the status of the shaft's current condition (open/closed).
+     * @return int
+     */
     public int getShaftStatus() {
         return shaftStatus;
     }

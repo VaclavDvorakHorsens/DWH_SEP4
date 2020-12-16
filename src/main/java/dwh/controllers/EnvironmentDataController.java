@@ -153,6 +153,10 @@ public class EnvironmentDataController {
         return jsonString;
     }
 
+    /**
+     * Get a list of forecasts.
+     * @return a Json String
+     */
     @GetMapping("/GetLogList")
     public String getListForecast()
     {
